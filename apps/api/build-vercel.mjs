@@ -58,8 +58,11 @@ writeFileSync(
   }),
 );
 
-// api/ 디렉토리 삭제: @vercel/node Zero Config이 api/index.ts를 감지하여
-// tsc 컴파일로 Build Output API 번들을 덮어쓰는 것을 방지
-rmSync(resolve(__dirname, 'api'), { recursive: true, force: true });
+// @vercel/node Zero Config이 api/index.ts를 tsc 컴파일하여 Build Output API를
+// 덮어쓰는 것을 방지: 번들링 후 소스를 빈 핸들러로 교체
+writeFileSync(
+  resolve(__dirname, 'api/index.ts'),
+  'export default function handler(_req: any, res: any) { res.end("use build output"); }\n',
+);
 
-console.log('Vercel build complete: CJS bundle created, api/ source removed');
+console.log('Vercel build complete: CJS bundle created');
