@@ -13,7 +13,7 @@ mkdirSync(FUNC_DIR, { recursive: true });
 
 // esbuild: 모노레포 루트 기준으로 경로 해석
 await build({
-  entryPoints: [resolve(__dirname, '_handler/index.ts')],
+  entryPoints: [resolve(__dirname, 'api/index.ts')],
   bundle: true,
   platform: 'node',
   target: 'node20',
@@ -39,7 +39,7 @@ writeFileSync(
   resolve(FUNC_DIR, '.vc-config.json'),
   JSON.stringify({
     handler: 'index.js',
-    runtime: 'nodejs20.x',
+    runtime: 'nodejs22.x',
     launcherType: 'Nodejs',
     shouldAddHelpers: true,
     shouldAddSourcemapSupport: false,
