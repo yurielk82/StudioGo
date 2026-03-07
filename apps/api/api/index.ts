@@ -1,36 +1,13 @@
 import { handle } from '@hono/node-server/vercel';
-import type { IncomingMessage, ServerResponse } from 'node:http';
-import app from '../src/app';
+import { Hono } from 'hono';
 
-// 디버그: 초기화 에러를 응답으로 반환
-const wrappedHandler = handle(app);
-let initError: Error | null = null;
+// 디버그: esbuild 번들 여부를 응답으로 확인
+const BUNDLE_SOURCE = 'ESBUILD_CJS_BUNDLE';
 
-export default function handler(req: IncomingMessage, res: ServerResponse) {
-  if (initError) {
-    res.setHeader('Content-Type', 'application/json');
-    res.statusCode = 500;
-    res.end(
-      JSON.stringify({
-        error: 'APP_INIT_FAILED',
-        message: initError.message,
-        stack: initError.stack?.split('\n').slice(0, 10),
-      }),
-    );
-    return;
-  }
-  try {
-    return wrappedHandler(req, res);
-  } catch (e: unknown) {
-    initError = e instanceof Error ? e : new Error(String(e));
-    res.setHeader('Content-Type', 'application/json');
-    res.statusCode = 500;
-    res.end(
-      JSON.stringify({
-        error: 'HANDLER_ERROR',
-        message: initError.message,
-        stack: initError.stack?.split('\n').slice(0, 10),
-      }),
-    );
-  }
-}
+const app = new Hono();
+app.get('/', (c) =>
+  c.json({ success: true, bundle: BUNDLE_SOURCE, data: { service: 'StudioGo API' } }),
+);
+app.get('/*', (c) => c.json({ success: true, bundle: BUNDLE_SOURCE, path: c.req.path }));
+
+export default handle(app);

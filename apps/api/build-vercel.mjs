@@ -26,6 +26,8 @@ await build({
   absWorkingDir: resolve(__dirname, '../..'),
   // CJS default export를 module.exports에 직접 할당
   footer: { js: 'if(module.exports.default)module.exports=module.exports.default;' },
+  // 디버그: 번들 소스 식별 배너
+  banner: { js: '/* ESBUILD_BUNDLE_MARKER_v1 */' },
 });
 
 // 함수 디렉토리에 CJS 명시 (상위 package.json의 "type": "module" 오버라이드)
