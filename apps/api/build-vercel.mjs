@@ -18,7 +18,7 @@ await build({
   platform: 'node',
   target: 'node20',
   format: 'cjs',
-  outfile: resolve(FUNC_DIR, 'index.js'),
+  outfile: resolve(FUNC_DIR, 'index.cjs'),
   external: ['node:*'],
   minify: false,
   sourcemap: false,
@@ -38,7 +38,7 @@ writeFileSync(
 writeFileSync(
   resolve(FUNC_DIR, '.vc-config.json'),
   JSON.stringify({
-    handler: 'index.js',
+    handler: 'index.cjs',
     runtime: 'nodejs20.x',
     launcherType: 'Nodejs',
     shouldAddHelpers: true,
