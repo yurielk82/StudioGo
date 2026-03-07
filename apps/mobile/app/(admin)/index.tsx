@@ -9,10 +9,12 @@ import {
   FileText,
   Shield,
   Bell,
+  BarChart3,
 } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, COLORS } from '@/design-system';
 
 const MENU_ITEMS = [
+  { key: 'dashboard', icon: BarChart3, label: '통계 대시보드', route: '/(admin)/dashboard' },
   { key: 'settings', icon: Settings, label: '운영 설정', route: '/(admin)/settings' },
   { key: 'studios', icon: Building2, label: '스튜디오 관리', route: '/(admin)/studios' },
   { key: 'blackouts', icon: CalendarX, label: '블랙아웃', route: '/(admin)/blackouts' },

@@ -20,6 +20,7 @@ export default function AdminLayout() {
       <Stack.Screen name="permissions" />
       <Stack.Screen name="feature-flags" />
       <Stack.Screen name="logs" />
+      <Stack.Screen name="dashboard" />
     </Stack>
   );
 }
