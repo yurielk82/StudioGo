@@ -10,8 +10,8 @@ import notificationsRoutes from './routes/notifications';
 
 const app = new Hono();
 
-// 글로벌 미들웨어
-app.use('*', errorHandler);
+// 글로벌 에러 핸들러 + 미들웨어
+app.onError(errorHandler);
 app.use('*', logger());
 app.use(
   '*',
