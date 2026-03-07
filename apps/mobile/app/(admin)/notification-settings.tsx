@@ -26,7 +26,7 @@ export default function NotificationSettingsScreen() {
   if (isLoading) {
     return (
       <Screen>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </Screen>
     );
   }
@@ -71,7 +71,7 @@ export default function NotificationSettingsScreen() {
                       enabled: val,
                     })
                   }
-                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary }}
+                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary.DEFAULT }}
                   disabled={updateSetting.isPending}
                 />
               </View>
@@ -92,7 +92,7 @@ export default function NotificationSettingsScreen() {
                       pushEnabled: val,
                     })
                   }
-                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary }}
+                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary.DEFAULT }}
                   disabled={updateSetting.isPending || !setting.enabled}
                 />
               </View>
@@ -113,13 +113,13 @@ export default function NotificationSettingsScreen() {
                       alimtalkEnabled: val,
                     })
                   }
-                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary }}
+                  trackColor={{ false: COLORS.neutral[300], true: COLORS.primary.DEFAULT }}
                   disabled={updateSetting.isPending || !setting.enabled}
                 />
               </View>
 
               {setting.templateCode && (
-                <StyledText variant="body-xs" className="mt-2 text-neutral-400">
+                <StyledText variant="body-sm" className="mt-2 text-neutral-400">
                   템플릿: {setting.templateCode}
                 </StyledText>
               )}

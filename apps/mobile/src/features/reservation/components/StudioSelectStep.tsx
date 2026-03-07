@@ -16,7 +16,7 @@ export function StudioSelectStep() {
   if (isLoading) {
     return (
       <View className="items-center py-12">
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
         <StyledText variant="body-sm" className="mt-2 text-neutral-500">
           스튜디오 목록을 불러오는 중...
         </StyledText>

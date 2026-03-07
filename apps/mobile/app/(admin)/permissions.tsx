@@ -33,7 +33,7 @@ export default function PermissionsScreen() {
   if (isLoadingOperators) {
     return (
       <Screen>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </Screen>
     );
   }
@@ -61,7 +61,7 @@ export default function PermissionsScreen() {
             <Pressable key={op.id} onPress={() => setSelectedOperatorId(op.id)}>
               <GlassCard className="mb-3 flex-row items-center justify-between p-4">
                 <View className="flex-1 flex-row items-center">
-                  <Shield size={20} color={COLORS.primary} />
+                  <Shield size={20} color={COLORS.primary.DEFAULT} />
                   <View className="ml-3">
                     <StyledText variant="body-lg" className="font-medium">
                       {op.name}
@@ -99,7 +99,7 @@ export default function PermissionsScreen() {
       </StyledText>
 
       {isLoadingPerms ? (
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       ) : permissions ? (
         <ScrollView>
           {Object.entries(PERMISSION_LABELS).map(([key, label]) => (
@@ -108,7 +108,7 @@ export default function PermissionsScreen() {
               <Switch
                 value={permissions.permissions[key as keyof typeof permissions.permissions]}
                 onValueChange={(val) => handleToggle(key, val)}
-                trackColor={{ false: COLORS.neutral[300], true: COLORS.primary }}
+                trackColor={{ false: COLORS.neutral[300], true: COLORS.primary.DEFAULT }}
                 disabled={updatePermissions.isPending}
               />
             </GlassCard>

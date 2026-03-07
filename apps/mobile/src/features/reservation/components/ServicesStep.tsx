@@ -36,7 +36,7 @@ export function ServicesStep() {
 
       {isLoading ? (
         <View className="items-center py-8">
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
         </View>
       ) : activeServices.length === 0 ? (
         <GlassCard className="mb-4 items-center p-6">
@@ -67,7 +67,7 @@ export function ServicesStep() {
                           {item.name}
                         </StyledText>
                         {item.description ? (
-                          <StyledText variant="body-xs" className="text-neutral-500">
+                          <StyledText variant="body-sm" className="text-neutral-500">
                             {item.description}
                           </StyledText>
                         ) : null}
