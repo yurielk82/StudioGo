@@ -24,6 +24,8 @@ await build({
   sourcemap: false,
   // absWorkingDir을 모노레포 루트로 설정하여 shared/ 경로 해석
   absWorkingDir: resolve(__dirname, '../..'),
+  // CJS default export를 module.exports에 직접 할당
+  footer: { js: 'if(module.exports.default)module.exports=module.exports.default;' },
 });
 
 // 함수 설정
