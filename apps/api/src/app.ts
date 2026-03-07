@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import reservationsRoutes from './routes/reservations';
 import slotsRoutes from './routes/slots';
 import cronRoutes from './routes/cron';
+import notificationsRoutes from './routes/notifications';
 
 const app = new Hono();
 
@@ -38,6 +39,7 @@ app.route('/auth', authRoutes);
 app.route('/reservations', reservationsRoutes);
 app.route('/slots', slotsRoutes);
 app.route('/cron', cronRoutes);
+app.route('/notifications', notificationsRoutes);
 
 // 개발 서버
 const port = Number(process.env.PORT) ?? 3001;
