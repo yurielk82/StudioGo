@@ -1,4 +1,4 @@
-import { eq, and, sql, inArray, gte, lte, or, like } from 'drizzle-orm';
+import { eq, and, sql, inArray } from 'drizzle-orm';
 import { db } from '@db';
 import {
   reservations,
@@ -13,11 +13,7 @@ import type { ReservationStatus } from '@studiogo/shared/contracts';
 
 export const reservationRepository = {
   async findById(id: string) {
-    const result = await db
-      .select()
-      .from(reservations)
-      .where(eq(reservations.id, id))
-      .limit(1);
+    const result = await db.select().from(reservations).where(eq(reservations.id, id)).limit(1);
     return result[0] ?? null;
   },
 
@@ -38,10 +34,7 @@ export const reservationRepository = {
     return result[0] ?? null;
   },
 
-  async countActiveByUserAndDate(
-    userId: string,
-    date: string,
-  ): Promise<number> {
+  async countActiveByUserAndDate(userId: string, date: string): Promise<number> {
     const result = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(reservations)

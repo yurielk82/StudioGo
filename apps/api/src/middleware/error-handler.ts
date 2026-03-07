@@ -2,7 +2,7 @@ import type { Context, Next } from 'hono';
 import { ApiError } from '../lib/api-error';
 import { ZodError } from 'zod';
 
-export async function errorHandler(c: Context, next: Next) {
+export async function errorHandler(c: Context, next: Next): Promise<Response | void> {
   try {
     await next();
   } catch (error) {

@@ -33,7 +33,7 @@ slotsRoute.post('/hold', requireAuth, requireApproved, async (c) => {
 // DELETE /slots/hold/:token — hold 해제
 slotsRoute.delete('/hold/:token', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const token = c.req.param('token');
+  const token = c.req.param('token') ?? '';
   await slotService.cancelHold(token, user.userId);
   return success(c, { message: 'Hold가 해제되었습니다.' });
 });

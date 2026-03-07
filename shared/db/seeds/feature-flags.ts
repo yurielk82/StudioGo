@@ -13,7 +13,7 @@ const FLAGS = [
   { key: 'weekly_report', enabled: true, description: '주간 리포트' },
 ];
 
-export async function seedFeatureFlags(db: PostgresJsDatabase) {
+export async function seedFeatureFlags(db: PostgresJsDatabase<Record<string, unknown>>) {
   for (const flag of FLAGS) {
     await db
       .insert(featureFlags)

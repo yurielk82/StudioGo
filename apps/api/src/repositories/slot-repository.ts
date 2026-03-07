@@ -1,15 +1,11 @@
-import { eq, and, sql, inArray } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { db } from '@db';
 import { timeSlots, slotHolds } from '@db/schema';
 import type { TimeSlotStatus } from '@studiogo/shared/contracts';
 
 export const slotRepository = {
   async findById(id: string) {
-    const result = await db
-      .select()
-      .from(timeSlots)
-      .where(eq(timeSlots.id, id))
-      .limit(1);
+    const result = await db.select().from(timeSlots).where(eq(timeSlots.id, id)).limit(1);
     return result[0] ?? null;
   },
 
@@ -72,21 +68,12 @@ export const slotRepository = {
 
   // ── Hold 관련 ──────────────────────────────────
 
-  async createHold(data: {
-    timeSlotId: string;
-    userId: string;
-    expiresAt: Date;
-  }) {
+  async createHold(data: { timeSlotId: string; userId: string; expiresAt: Date }) {
     // ACTIVE hold가 같은 슬롯에 이미 있는지 확인
     const existing = await db
       .select()
       .from(slotHolds)
-      .where(
-        and(
-          eq(slotHolds.timeSlotId, data.timeSlotId),
-          eq(slotHolds.status, 'ACTIVE'),
-        ),
-      )
+      .where(and(eq(slotHolds.timeSlotId, data.timeSlotId), eq(slotHolds.status, 'ACTIVE')))
       .limit(1);
 
     if (existing.length > 0) return null;
@@ -117,24 +104,14 @@ export const slotRepository = {
     await db
       .update(slotHolds)
       .set({ status: 'CONSUMED', updatedAt: new Date() })
-      .where(
-        and(
-          eq(slotHolds.holdToken, holdToken),
-          eq(slotHolds.status, 'ACTIVE'),
-        ),
-      );
+      .where(and(eq(slotHolds.holdToken, holdToken), eq(slotHolds.status, 'ACTIVE')));
   },
 
   async expireHolds() {
     const result = await db
       .update(slotHolds)
       .set({ status: 'EXPIRED', updatedAt: new Date() })
-      .where(
-        and(
-          eq(slotHolds.status, 'ACTIVE'),
-          sql`${slotHolds.expiresAt} < now()`,
-        ),
-      )
+      .where(and(eq(slotHolds.status, 'ACTIVE'), sql`${slotHolds.expiresAt} < now()`))
       .returning({ id: slotHolds.id });
 
     return result.length;

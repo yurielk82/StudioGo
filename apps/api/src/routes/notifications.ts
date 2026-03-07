@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { requireAuth, getAuthUser } from '../middleware/auth';
 import { notificationRepository } from '../repositories/notification-repository';
 import { success } from '../lib/response';
-import { z } from 'zod';
 
 const notificationsRoute = new Hono();
 
@@ -22,7 +21,7 @@ notificationsRoute.get('/', requireAuth, async (c) => {
 // POST /notifications/:id/read — 읽음 처리
 notificationsRoute.post('/:id/read', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const id = c.req.param('id');
+  const id = c.req.param('id') ?? '';
   await notificationRepository.markAsRead(id, user.userId);
   return success(c, { message: '읽음 처리 완료' });
 });

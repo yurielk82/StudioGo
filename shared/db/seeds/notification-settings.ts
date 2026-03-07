@@ -1,9 +1,11 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { notificationSettings } from '../schema';
+import { notificationSettings, notificationEventTypeEnum } from '../schema';
 import { sql } from 'drizzle-orm';
 
+type NotificationEventType = (typeof notificationEventTypeEnum.enumValues)[number];
+
 type EventSeed = {
-  eventType: (typeof EVENTS)[number]['eventType'];
+  eventType: NotificationEventType;
   sendToMember: boolean;
   sendToOperator: boolean;
   templateContent: string;
@@ -20,7 +22,8 @@ const EVENTS: EventSeed[] = [
     eventType: 'MEMBER_APPROVED',
     sendToMember: true,
     sendToOperator: false,
-    templateContent: '{{회원이름}}님, 회원 승인이 완료되었습니다. 스튜디오고에 오신 것을 환영합니다!',
+    templateContent:
+      '{{회원이름}}님, 회원 승인이 완료되었습니다. 스튜디오고에 오신 것을 환영합니다!',
   },
   {
     eventType: 'MEMBER_REJECTED',
@@ -32,13 +35,15 @@ const EVENTS: EventSeed[] = [
     eventType: 'RESERVATION_REQUESTED',
     sendToMember: true,
     sendToOperator: true,
-    templateContent: '{{닉네임}}님이 {{날짜}} {{시간}} {{스튜디오명}} 예약을 신청했습니다. ({{예약번호}})',
+    templateContent:
+      '{{닉네임}}님이 {{날짜}} {{시간}} {{스튜디오명}} 예약을 신청했습니다. ({{예약번호}})',
   },
   {
     eventType: 'RESERVATION_APPROVED',
     sendToMember: true,
     sendToOperator: false,
-    templateContent: '{{회원이름}}님, {{날짜}} {{시간}} {{스튜디오명}} 예약이 승인되었습니다. ({{예약번호}})',
+    templateContent:
+      '{{회원이름}}님, {{날짜}} {{시간}} {{스튜디오명}} 예약이 승인되었습니다. ({{예약번호}})',
   },
   {
     eventType: 'RESERVATION_REJECTED',
@@ -56,7 +61,8 @@ const EVENTS: EventSeed[] = [
     eventType: 'RESERVATION_CANCELLED_BY_OPERATOR',
     sendToMember: true,
     sendToOperator: false,
-    templateContent: '{{회원이름}}님, {{예약번호}} 예약이 운영자에 의해 취소되었습니다. 사유: {{취소사유}}',
+    templateContent:
+      '{{회원이름}}님, {{예약번호}} 예약이 운영자에 의해 취소되었습니다. 사유: {{취소사유}}',
   },
   {
     eventType: 'BROADCAST_REMINDER',
@@ -126,7 +132,7 @@ const EVENTS: EventSeed[] = [
   },
 ];
 
-export async function seedNotificationSettings(db: PostgresJsDatabase) {
+export async function seedNotificationSettings(db: PostgresJsDatabase<Record<string, unknown>>) {
   for (const event of EVENTS) {
     await db
       .insert(notificationSettings)

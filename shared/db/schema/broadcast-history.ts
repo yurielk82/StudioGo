@@ -1,4 +1,15 @@
-import { pgTable, uuid, date, varchar, integer, text, jsonb, timestamp, pgEnum, index, check } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  date,
+  integer,
+  text,
+  jsonb,
+  timestamp,
+  pgEnum,
+  index,
+  check,
+} from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { users } from './users';
 import { studios } from './studios';
@@ -37,6 +48,9 @@ export const broadcastHistory = pgTable(
   },
   (table) => [
     index('broadcast_history_user_date_idx').on(table.userId, table.date),
-    check('rating_range', sql`${table.rating} IS NULL OR (${table.rating} >= 1 AND ${table.rating} <= 5)`),
+    check(
+      'rating_range',
+      sql`${table.rating} IS NULL OR (${table.rating} >= 1 AND ${table.rating} <= 5)`,
+    ),
   ],
 );

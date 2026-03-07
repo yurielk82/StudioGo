@@ -1,7 +1,7 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { additionalServices } from '../schema';
 
-export async function seedAdditionalServices(db: PostgresJsDatabase) {
+export async function seedAdditionalServices(db: PostgresJsDatabase<Record<string, unknown>>) {
   const existing = await db.select().from(additionalServices).limit(1);
   if (existing.length > 0) return;
 

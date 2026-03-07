@@ -1,7 +1,7 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { studios } from '../schema';
 
-export async function seedStudios(db: PostgresJsDatabase) {
+export async function seedStudios(db: PostgresJsDatabase<Record<string, unknown>>) {
   const existingStudios = await db.select().from(studios).limit(1);
   if (existingStudios.length > 0) return;
 
@@ -28,7 +28,14 @@ export async function seedStudios(db: PostgresJsDatabase) {
       name: 'C 스튜디오',
       description: 'VIP 전용 프리미엄 스튜디오.',
       capacity: 6,
-      equipment: ['프로 조명 세트', '4K 듀얼 카메라', '콘덴서 마이크', '대형 모니터', '옷걸이 200개', '피팅룸'],
+      equipment: [
+        '프로 조명 세트',
+        '4K 듀얼 카메라',
+        '콘덴서 마이크',
+        '대형 모니터',
+        '옷걸이 200개',
+        '피팅룸',
+      ],
       images: [],
       isActive: true,
       sortOrder: 2,

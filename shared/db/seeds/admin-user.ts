@@ -2,7 +2,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { users } from '../schema';
 import { sql } from 'drizzle-orm';
 
-export async function seedAdminUser(db: PostgresJsDatabase) {
+export async function seedAdminUser(db: PostgresJsDatabase<Record<string, unknown>>) {
   await db
     .insert(users)
     .values({

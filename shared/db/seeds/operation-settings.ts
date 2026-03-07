@@ -65,7 +65,7 @@ const SETTINGS = [
   },
 ];
 
-export async function seedOperationSettings(db: PostgresJsDatabase) {
+export async function seedOperationSettings(db: PostgresJsDatabase<Record<string, unknown>>) {
   for (const setting of SETTINGS) {
     await db
       .insert(operationSettings)
