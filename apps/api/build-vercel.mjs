@@ -13,12 +13,12 @@ mkdirSync(FUNC_DIR, { recursive: true });
 
 // esbuild: 모노레포 루트 기준으로 경로 해석
 await build({
-  entryPoints: [resolve(__dirname, 'api/index.ts')],
+  entryPoints: [resolve(__dirname, '_handler/index.ts')],
   bundle: true,
   platform: 'node',
   target: 'node20',
   format: 'cjs',
-  outfile: resolve(FUNC_DIR, 'index.cjs'),
+  outfile: resolve(FUNC_DIR, 'index.js'),
   external: ['node:*'],
   minify: false,
   sourcemap: false,
@@ -38,7 +38,7 @@ writeFileSync(
 writeFileSync(
   resolve(FUNC_DIR, '.vc-config.json'),
   JSON.stringify({
-    handler: 'index.cjs',
+    handler: 'index.js',
     runtime: 'nodejs20.x',
     launcherType: 'Nodejs',
     shouldAddHelpers: true,
