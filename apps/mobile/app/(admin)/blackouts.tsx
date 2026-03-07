@@ -26,10 +26,10 @@ export default function BlackoutsScreen() {
           data={data ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
-              <View className="flex-row justify-between items-start mb-2">
+            <GlassCard className="mb-2 p-4">
+              <View className="mb-2 flex-row items-start justify-between">
                 <View className="flex-row items-center">
-                  <CalendarX size={16} color={COLORS.error.DEFAULT} />
+                  <CalendarX size={16} color={COLORS.error} />
                   <StyledText variant="body-lg" className="ml-2 font-medium">
                     {item.studioName}
                   </StyledText>
@@ -41,14 +41,14 @@ export default function BlackoutsScreen() {
                 {new Date(item.endAt).toLocaleString('ko-KR')}
               </StyledText>
               {item.reason && (
-                <StyledText variant="caption" className="text-neutral-400 mt-1">
+                <StyledText variant="caption" className="mt-1 text-neutral-400">
                   {item.reason}
                 </StyledText>
               )}
             </GlassCard>
           )}
           ListEmptyComponent={
-            <StyledText variant="body-md" className="text-neutral-400 text-center py-8">
+            <StyledText variant="body-md" className="py-8 text-center text-neutral-400">
               등록된 블랙아웃이 없습니다.
             </StyledText>
           }

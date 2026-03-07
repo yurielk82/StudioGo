@@ -1,5 +1,5 @@
 import { View, ScrollView } from 'react-native';
-import { Trophy, BarChart2, TrendingUp, AlertOctagon, LogOut } from 'lucide-react-native';
+import { Trophy, BarChart2, TrendingUp, LogOut } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Button, Badge, Divider, COLORS } from '@/design-system';
 import { useAuthStore } from '@/stores/auth-store';
 import { useMemberStats } from '@/hooks/useStats';
@@ -25,8 +25,8 @@ export default function ProfileScreen() {
     <Screen>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {/* 프로필 헤더 */}
-        <View className="items-center mb-6">
-          <View className="w-20 h-20 rounded-full bg-primary-100 items-center justify-center mb-3">
+        <View className="mb-6 items-center">
+          <View className="mb-3 h-20 w-20 items-center justify-center rounded-full bg-primary-100">
             <StyledText variant="display-sm" className="text-primary">
               {user?.nickname?.charAt(0) ?? '?'}
             </StyledText>
@@ -38,8 +38,8 @@ export default function ProfileScreen() {
         </View>
 
         {/* 통계 카드 */}
-        <View className="flex-row gap-3 mb-4">
-          <GlassCard className="flex-1 p-4 items-center">
+        <View className="mb-4 flex-row gap-3">
+          <GlassCard className="flex-1 items-center p-4">
             <BarChart2 size={20} color={COLORS.primary.DEFAULT} />
             <StyledText variant="display-sm" className="mt-1">
               {String(stats?.totalBroadcasts ?? 0)}
@@ -49,7 +49,7 @@ export default function ProfileScreen() {
             </StyledText>
           </GlassCard>
 
-          <GlassCard className="flex-1 p-4 items-center">
+          <GlassCard className="flex-1 items-center p-4">
             <TrendingUp size={20} color={COLORS.secondary.DEFAULT} />
             <StyledText variant="display-sm" className="mt-1">
               {String(stats?.monthlyBroadcasts ?? 0)}
@@ -59,12 +59,10 @@ export default function ProfileScreen() {
             </StyledText>
           </GlassCard>
 
-          <GlassCard className="flex-1 p-4 items-center">
-            <Trophy size={20} color={COLORS.warning.DEFAULT} />
+          <GlassCard className="flex-1 items-center p-4">
+            <Trophy size={20} color={COLORS.warning} />
             <StyledText variant="display-sm" className="mt-1">
-              {stats?.broadcastsUntilNextTier != null
-                ? String(stats.broadcastsUntilNextTier)
-                : '-'}
+              {stats?.broadcastsUntilNextTier != null ? String(stats.broadcastsUntilNextTier) : '-'}
             </StyledText>
             <StyledText variant="caption" className="text-neutral-500">
               승급까지
@@ -73,12 +71,12 @@ export default function ProfileScreen() {
         </View>
 
         {/* 상세 통계 */}
-        <GlassCard className="p-5 mb-4">
+        <GlassCard className="mb-4 p-5">
           <StyledText variant="heading-sm" className="mb-3">
             방송 통계
           </StyledText>
 
-          <View className="flex-row justify-between mb-2">
+          <View className="mb-2 flex-row justify-between">
             <StyledText variant="body-md" className="text-neutral-500">
               평균 방송 시간
             </StyledText>
@@ -89,7 +87,7 @@ export default function ProfileScreen() {
             </StyledText>
           </View>
 
-          <View className="flex-row justify-between mb-2">
+          <View className="mb-2 flex-row justify-between">
             <StyledText variant="body-md" className="text-neutral-500">
               노쇼율
             </StyledText>
@@ -119,7 +117,7 @@ export default function ProfileScreen() {
           onPress={() => logout.mutate()}
           variant="ghost"
           fullWidth
-          icon={<LogOut size={18} color={COLORS.error.DEFAULT} />}
+          icon={<LogOut size={18} color={COLORS.error} />}
         >
           <StyledText className="text-error">로그아웃</StyledText>
         </Button>

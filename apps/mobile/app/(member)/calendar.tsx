@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { Screen, StyledText, COLORS } from '@/design-system';
 import { MonthlyView, WeeklyView, DailyView } from '@/features/calendar/components';
-import { todayKST, toKSTDateString, addDays } from '@domain/date-time';
+import { todayKST, addDays } from '@domain/date-time';
 
 type CalendarMode = 'monthly' | 'weekly' | 'daily';
 
@@ -17,11 +17,12 @@ const MODE_TABS: { key: CalendarMode; label: string }[] = [
  * 캘린더 탭 — 월/주/일 3종 뷰 전환
  */
 export default function CalendarScreen() {
-  const today = todayKST();
+  const today = todayKST(); // string "YYYY-MM-DD"
   const [mode, setMode] = useState<CalendarMode>('monthly');
-  const [selectedDate, setSelectedDate] = useState(toKSTDateString(today));
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth() + 1);
+  const [selectedDate, setSelectedDate] = useState(today);
+  const todayDate = new Date(today);
+  const [viewYear, setViewYear] = useState(todayDate.getFullYear());
+  const [viewMonth, setViewMonth] = useState(todayDate.getMonth() + 1);
 
   function handlePrev() {
     if (mode === 'monthly') {
@@ -32,9 +33,9 @@ export default function CalendarScreen() {
         setViewMonth((m) => m - 1);
       }
     } else if (mode === 'weekly') {
-      setSelectedDate((d) => toKSTDateString(addDays(new Date(d), -7)));
+      setSelectedDate((d: string) => addDays(d, -7));
     } else {
-      setSelectedDate((d) => toKSTDateString(addDays(new Date(d), -1)));
+      setSelectedDate((d: string) => addDays(d, -1));
     }
   }
 
@@ -47,9 +48,9 @@ export default function CalendarScreen() {
         setViewMonth((m) => m + 1);
       }
     } else if (mode === 'weekly') {
-      setSelectedDate((d) => toKSTDateString(addDays(new Date(d), 7)));
+      setSelectedDate((d: string) => addDays(d, 7));
     } else {
-      setSelectedDate((d) => toKSTDateString(addDays(new Date(d), 1)));
+      setSelectedDate((d: string) => addDays(d, 1));
     }
   }
 
@@ -68,18 +69,18 @@ export default function CalendarScreen() {
   return (
     <Screen>
       {/* 모드 탭 */}
-      <View className="flex-row bg-neutral-100 rounded-button p-1 mb-4">
+      <View className="mb-4 flex-row rounded-button bg-neutral-100 p-1">
         {MODE_TABS.map((tab) => (
           <Pressable
             key={tab.key}
             onPress={() => setMode(tab.key)}
-            className={`flex-1 py-2 rounded-button items-center ${
+            className={`flex-1 items-center rounded-button py-2 ${
               mode === tab.key ? 'bg-white shadow-sm' : ''
             }`}
           >
             <StyledText
               variant="label-md"
-              className={mode === tab.key ? 'text-primary font-semibold' : 'text-neutral-500'}
+              className={mode === tab.key ? 'font-semibold text-primary' : 'text-neutral-500'}
             >
               {tab.label}
             </StyledText>
@@ -88,7 +89,7 @@ export default function CalendarScreen() {
       </View>
 
       {/* 네비게이션 */}
-      <View className="flex-row items-center justify-between mb-4">
+      <View className="mb-4 flex-row items-center justify-between">
         <Pressable onPress={handlePrev} className="p-2">
           <ChevronLeft size={24} color={COLORS.neutral[700]} />
         </Pressable>

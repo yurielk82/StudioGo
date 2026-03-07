@@ -1,14 +1,7 @@
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Package,
-  AlertTriangle,
-  ArrowLeft,
-} from 'lucide-react-native';
+import { Calendar, Clock, MapPin, Package, AlertTriangle, ArrowLeft } from 'lucide-react-native';
 import {
   Screen,
   StyledText,
@@ -64,7 +57,7 @@ export default function ReservationDetailScreen() {
     return (
       <Screen>
         <View className="flex-1 items-center justify-center">
-          <AlertTriangle size={48} color={COLORS.error.DEFAULT} />
+          <AlertTriangle size={48} color={COLORS.error} />
           <StyledText variant="heading-md" className="mt-4">
             예약을 찾을 수 없습니다
           </StyledText>
@@ -78,17 +71,14 @@ export default function ReservationDetailScreen() {
 
   function handleCancel() {
     if (!id || !cancelReason.trim()) return;
-    cancelMutation.mutate(
-      { id, reason: cancelReason },
-      { onSuccess: () => router.back() },
-    );
+    cancelMutation.mutate({ id, reason: cancelReason }, { onSuccess: () => router.back() });
   }
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {/* 헤더 */}
-        <View className="flex-row items-center mb-4">
+        <View className="mb-4 flex-row items-center">
           <Button onPress={() => router.back()} variant="ghost" size="sm">
             <ArrowLeft size={20} color={COLORS.neutral[700]} />
           </Button>
@@ -101,19 +91,19 @@ export default function ReservationDetailScreen() {
         </View>
 
         {/* 예약번호 */}
-        <StyledText variant="caption" className="text-neutral-500 mb-4">
+        <StyledText variant="caption" className="mb-4 text-neutral-500">
           {reservation.reservationNumber}
         </StyledText>
 
         {/* 기본 정보 */}
-        <GlassCard className="p-5 mb-4">
-          <View className="flex-row items-center mb-3">
+        <GlassCard className="mb-4 p-5">
+          <View className="mb-3 flex-row items-center">
             <MapPin size={18} color={COLORS.primary.DEFAULT} />
             <StyledText variant="body-lg" className="ml-2 font-medium">
               {reservation.studioName}
             </StyledText>
           </View>
-          <View className="flex-row items-center mb-3">
+          <View className="mb-3 flex-row items-center">
             <Calendar size={18} color={COLORS.primary.DEFAULT} />
             <StyledText variant="body-lg" className="ml-2">
               {reservation.date}
@@ -129,15 +119,15 @@ export default function ReservationDetailScreen() {
 
         {/* 부가서비스 */}
         {reservation.services.length > 0 && (
-          <GlassCard className="p-5 mb-4">
-            <View className="flex-row items-center mb-3">
+          <GlassCard className="mb-4 p-5">
+            <View className="mb-3 flex-row items-center">
               <Package size={18} color={COLORS.secondary.DEFAULT} />
               <StyledText variant="heading-sm" className="ml-2">
                 부가서비스
               </StyledText>
             </View>
             {reservation.services.map((svc) => (
-              <View key={svc.serviceId} className="flex-row justify-between mb-2">
+              <View key={svc.serviceId} className="mb-2 flex-row justify-between">
                 <StyledText variant="body-md">{svc.serviceName}</StyledText>
                 <StyledText variant="body-md" className="text-neutral-500">
                   {svc.quantity > 1 ? `x${svc.quantity}` : ''}
@@ -149,8 +139,8 @@ export default function ReservationDetailScreen() {
 
         {/* 메모 */}
         {reservation.memo && (
-          <GlassCard className="p-5 mb-4">
-            <StyledText variant="label-md" className="text-neutral-500 mb-1">
+          <GlassCard className="mb-4 p-5">
+            <StyledText variant="label-md" className="mb-1 text-neutral-500">
               메모
             </StyledText>
             <StyledText variant="body-md">{reservation.memo}</StyledText>
@@ -159,8 +149,8 @@ export default function ReservationDetailScreen() {
 
         {/* 거절 사유 */}
         {reservation.rejectedReason && (
-          <GlassCard className="p-5 mb-4">
-            <StyledText variant="label-md" className="text-error mb-1">
+          <GlassCard className="mb-4 p-5">
+            <StyledText variant="label-md" className="mb-1 text-error">
               거절 사유
             </StyledText>
             <StyledText variant="body-md">{reservation.rejectedReason}</StyledText>
@@ -168,17 +158,15 @@ export default function ReservationDetailScreen() {
         )}
 
         {/* 상태 이력 */}
-        <GlassCard className="p-5 mb-4">
+        <GlassCard className="mb-4 p-5">
           <StyledText variant="heading-sm" className="mb-3">
             상태 이력
           </StyledText>
           {reservation.statusHistory.map((h, i) => (
-            <View key={i} className="flex-row items-start mb-2">
-              <View className="w-2 h-2 rounded-full bg-primary mt-2 mr-3" />
+            <View key={i} className="mb-2 flex-row items-start">
+              <View className="mr-3 mt-2 h-2 w-2 rounded-full bg-primary" />
               <View className="flex-1">
-                <StyledText variant="body-sm">
-                  {STATUS_LABEL[h.toStatus] ?? h.toStatus}
-                </StyledText>
+                <StyledText variant="body-sm">{STATUS_LABEL[h.toStatus] ?? h.toStatus}</StyledText>
                 <StyledText variant="caption" className="text-neutral-400">
                   {new Date(h.changedAt).toLocaleString('ko-KR')}
                 </StyledText>
@@ -223,11 +211,7 @@ export default function ReservationDetailScreen() {
                 </View>
               </View>
             ) : (
-              <Button
-                onPress={() => setShowCancelForm(true)}
-                variant="outline"
-                fullWidth
-              >
+              <Button onPress={() => setShowCancelForm(true)} variant="outline" fullWidth>
                 예약 취소
               </Button>
             )}

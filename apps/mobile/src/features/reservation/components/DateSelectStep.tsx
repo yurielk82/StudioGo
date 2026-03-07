@@ -3,15 +3,15 @@ import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
 import { StyledText, Button, COLORS } from '@/design-system';
 import { useReservationWizardStore } from '@/stores/reservation-wizard-store';
-import { addDays, todayKST, toKSTDateString } from '@domain/date-time';
+import { addDays, todayKST } from '@domain/date-time';
 
 const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
 export function DateSelectStep() {
   const { date, setDate, nextStep, prevStep } = useReservationWizardStore();
-  const today = todayKST();
+  const today = todayKST(); // string "YYYY-MM-DD"
   const [viewMonth, setViewMonth] = useState(() => {
-    const d = date ? new Date(date) : today;
+    const d = date ? new Date(date) : new Date(today);
     return { year: d.getFullYear(), month: d.getMonth() };
   });
 
@@ -19,11 +19,13 @@ export function DateSelectStep() {
     const firstDay = new Date(viewMonth.year, viewMonth.month, 1);
     const lastDay = new Date(viewMonth.year, viewMonth.month + 1, 0);
     const startOffset = firstDay.getDay();
-    const days: (Date | null)[] = [];
+    const days: (string | null)[] = [];
 
     for (let i = 0; i < startOffset; i++) days.push(null);
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      days.push(new Date(viewMonth.year, viewMonth.month, d));
+      const mm = String(viewMonth.month + 1).padStart(2, '0');
+      const dd = String(d).padStart(2, '0');
+      days.push(`${viewMonth.year}-${mm}-${dd}`);
     }
     return days;
   }, [viewMonth.year, viewMonth.month]);
@@ -42,11 +44,11 @@ export function DateSelectStep() {
     });
   }
 
-  function handleSelectDate(d: Date) {
-    if (d < today) return;
+  function handleSelectDate(dateStr: string) {
+    if (dateStr < today) return;
     const maxDate = addDays(today, 30);
-    if (d > maxDate) return;
-    setDate(toKSTDateString(d));
+    if (dateStr > maxDate) return;
+    setDate(dateStr);
     nextStep();
   }
 
@@ -59,7 +61,7 @@ export function DateSelectStep() {
       </StyledText>
 
       {/* 월 네비게이션 */}
-      <View className="flex-row items-center justify-between mb-4">
+      <View className="mb-4 flex-row items-center justify-between">
         <Pressable onPress={handlePrevMonth} className="p-2">
           <ChevronLeft size={24} color={COLORS.neutral[700]} />
         </Pressable>
@@ -70,7 +72,7 @@ export function DateSelectStep() {
       </View>
 
       {/* 요일 헤더 */}
-      <View className="flex-row mb-2">
+      <View className="mb-2 flex-row">
         {DAYS_KO.map((day, i) => (
           <View key={day} className="flex-1 items-center">
             <StyledText
@@ -85,44 +87,41 @@ export function DateSelectStep() {
 
       {/* 날짜 그리드 */}
       <View className="flex-row flex-wrap">
-        {calendarDays.map((d, i) => {
-          if (!d) {
-            return <View key={`empty-${i}`} className="w-[14.28%] h-11" />;
+        {calendarDays.map((dateStr, i) => {
+          if (!dateStr) {
+            return <View key={`empty-${i}`} className="h-11 w-[14.28%]" />;
           }
 
-          const dateStr = toKSTDateString(d);
-          const isPast = d < today;
-          const isTooFar = d > addDays(today, 30);
+          const isPast = dateStr < today;
+          const isTooFar = dateStr > addDays(today, 30);
           const isDisabled = isPast || isTooFar;
           const isSelected = date === dateStr;
-          const isToday = dateStr === toKSTDateString(today);
+          const isToday = dateStr === today;
+          const dayPart = dateStr.split('-')[2] ?? '0';
+          const dayNum = parseInt(dayPart, 10);
 
           return (
             <Pressable
               key={dateStr}
-              onPress={() => !isDisabled && handleSelectDate(d)}
-              className="w-[14.28%] h-11 items-center justify-center"
+              onPress={() => !isDisabled && handleSelectDate(dateStr)}
+              className="h-11 w-[14.28%] items-center justify-center"
             >
               <View
-                className={`w-9 h-9 rounded-full items-center justify-center ${
-                  isSelected
-                    ? 'bg-primary'
-                    : isToday
-                      ? 'border-2 border-primary'
-                      : ''
+                className={`h-9 w-9 items-center justify-center rounded-full ${
+                  isSelected ? 'bg-primary' : isToday ? 'border-2 border-primary' : ''
                 }`}
               >
                 <StyledText
                   variant="body-sm"
                   className={
                     isSelected
-                      ? 'text-white font-semibold'
+                      ? 'font-semibold text-white'
                       : isDisabled
                         ? 'text-neutral-300'
                         : 'text-neutral-800'
                   }
                 >
-                  {String(d.getDate())}
+                  {String(dayNum)}
                 </StyledText>
               </View>
             </Pressable>

@@ -9,7 +9,7 @@ const WEB_REDIRECT_URI = `${process.env.EXPO_PUBLIC_APP_URL ?? 'http://localhost
 
 /**
  * 카카오 로그인 화면
- * - 네이티브: @react-native-kakao/login SDK 사용
+ * - 네이티브: @react-native-kakao/user SDK 사용
  * - 웹: OAuth redirect 방식
  */
 export default function LoginScreen() {
@@ -30,8 +30,8 @@ export default function LoginScreen() {
 
     // 네이티브: 카카오 SDK 로그인
     try {
-      const { login } = await import('@react-native-kakao/login');
-      const result = await login();
+      const kakaoUser = require('@react-native-kakao/user');
+      const result = await kakaoUser.login();
       if (result.accessToken) {
         nativeLogin.mutate(result.accessToken);
       }
@@ -42,17 +42,14 @@ export default function LoginScreen() {
 
   return (
     <Screen padded={false}>
-      <LinearGradient
-        colors={COLORS.gradient.primary}
-        style={{ flex: 1 }}
-      >
-        <View className="flex-1 justify-end pb-16 px-6">
+      <LinearGradient colors={COLORS.gradient.primary} style={{ flex: 1 }}>
+        <View className="flex-1 justify-end px-6 pb-16">
           {/* 로고 영역 */}
-          <View className="flex-1 justify-center items-center">
-            <StyledText variant="display-lg" className="text-white mb-2">
+          <View className="flex-1 items-center justify-center">
+            <StyledText variant="display-lg" className="mb-2 text-white">
               StudioGo
             </StyledText>
-            <StyledText variant="body-lg" className="text-white/70 text-center">
+            <StyledText variant="body-lg" className="text-center text-white/70">
               라이브커머스 스튜디오를{'\n'}간편하게 예약하세요
             </StyledText>
           </View>
@@ -67,18 +64,18 @@ export default function LoginScreen() {
               className="bg-[#FEE500] active:bg-[#E5CF00]"
               icon={<LogIn size={20} color="#391B1B" />}
             >
-              <StyledText className="text-[#391B1B] font-semibold text-body-lg">
+              <StyledText className="text-body-lg font-semibold text-[#391B1B]">
                 카카오로 시작하기
               </StyledText>
             </Button>
 
             {error && (
-              <StyledText variant="body-sm" className="text-error text-center mt-3">
+              <StyledText variant="body-sm" className="mt-3 text-center text-error">
                 로그인에 실패했습니다. 다시 시도해주세요.
               </StyledText>
             )}
 
-            <StyledText variant="caption" className="text-white/50 text-center mt-4">
+            <StyledText variant="caption" className="mt-4 text-center text-white/50">
               로그인 시 서비스 이용약관 및 개인정보 처리방침에 동의합니다.
             </StyledText>
           </GlassCard>

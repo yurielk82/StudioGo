@@ -1,8 +1,8 @@
 import { View, ScrollView, Pressable } from 'react-native';
 import { useMemo } from 'react';
-import { StyledText, Badge, COLORS } from '@/design-system';
+import { StyledText, COLORS } from '@/design-system';
 import { useWeeklyCalendar } from '@/hooks/useCalendar';
-import { toKSTDateString, todayKST, dateRange } from '@domain/date-time';
+import { todayKST, addDays } from '@domain/date-time';
 
 const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'] as const;
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 7); // 07:00~20:00
@@ -14,19 +14,23 @@ interface WeeklyViewProps {
 
 export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
   const { data } = useWeeklyCalendar(startDate);
-  const todayStr = toKSTDateString(todayKST());
+  const todayStr = todayKST();
 
   const weekDates = useMemo(() => {
     const start = new Date(startDate);
-    const sunday = new Date(start);
-    sunday.setDate(start.getDate() - start.getDay());
-    return dateRange(sunday, 7).map((d) => toKSTDateString(d));
+    const sundayOffset = -start.getDay();
+    const sundayStr = addDays(startDate, sundayOffset);
+    return Array.from({ length: 7 }, (_, i) => addDays(sundayStr, i));
   }, [startDate]);
 
   const slotsByDateHour = useMemo(() => {
-    const map = new Map<string, typeof data extends undefined ? never : NonNullable<typeof data>['slots'][number]>();
+    const map = new Map<
+      string,
+      typeof data extends undefined ? never : NonNullable<typeof data>['slots'][number]
+    >();
     data?.slots.forEach((slot) => {
-      const hour = parseInt(slot.startTime.split(':')[0]!, 10);
+      const hourPart = slot.startTime.split(':')[0] ?? '0';
+      const hour = parseInt(hourPart, 10);
       map.set(`${slot.date}-${hour}`, slot);
     });
     return map;
@@ -40,7 +44,7 @@ export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
           <View className="h-10" />
           {HOURS.map((hour) => (
             <View key={hour} className="h-14 justify-center">
-              <StyledText variant="caption" className="text-neutral-400 text-right pr-2">
+              <StyledText variant="caption" className="pr-2 text-right text-neutral-400">
                 {String(hour).padStart(2, '0')}
               </StyledText>
             </View>
@@ -55,14 +59,16 @@ export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
           return (
             <View key={dateStr} className="flex-1">
               {/* 날짜 헤더 */}
-              <View className={`h-10 items-center justify-center ${isToday ? 'bg-primary-50' : ''}`}>
-                <StyledText variant="label-sm" className={isToday ? 'text-primary' : 'text-neutral-500'}>
+              <View
+                className={`h-10 items-center justify-center ${isToday ? 'bg-primary-50' : ''}`}
+              >
+                <StyledText
+                  variant="label-sm"
+                  className={isToday ? 'text-primary' : 'text-neutral-500'}
+                >
                   {DAYS_KO[dayIndex]}
                 </StyledText>
-                <StyledText
-                  variant="label-md"
-                  className={isToday ? 'text-primary font-bold' : ''}
-                >
+                <StyledText variant="label-md" className={isToday ? 'font-bold text-primary' : ''}>
                   {String(dayNum)}
                 </StyledText>
               </View>
@@ -79,7 +85,7 @@ export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
                   >
                     {slot && (
                       <View
-                        className="flex-1 rounded-sm p-1 mt-0.5"
+                        className="mt-0.5 flex-1 rounded-sm p-1"
                         style={{
                           backgroundColor:
                             slot.status === 'RESERVED'

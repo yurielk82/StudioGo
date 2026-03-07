@@ -28,7 +28,7 @@ export function TimeSelectStep() {
     return (
       <View className="items-center py-12">
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
-        <StyledText variant="body-md" className="text-neutral-500 mt-3">
+        <StyledText variant="body-md" className="mt-3 text-neutral-500">
           시간대를 불러오는 중...
         </StyledText>
       </View>
@@ -38,8 +38,8 @@ export function TimeSelectStep() {
   if (error) {
     return (
       <View className="items-center py-12">
-        <AlertTriangle size={32} color={COLORS.error.DEFAULT} />
-        <StyledText variant="body-md" className="text-error mt-2">
+        <AlertTriangle size={32} color={COLORS.error} />
+        <StyledText variant="body-md" className="mt-2 text-error">
           시간대 조회에 실패했습니다.
         </StyledText>
         <Button onPress={prevStep} variant="ghost" className="mt-4">
@@ -54,7 +54,7 @@ export function TimeSelectStep() {
       <StyledText variant="heading-md" className="mb-1">
         시간 선택
       </StyledText>
-      <StyledText variant="body-sm" className="text-neutral-500 mb-4">
+      <StyledText variant="body-sm" className="mb-4 text-neutral-500">
         {date} 사용 가능한 시간대
       </StyledText>
 
@@ -71,7 +71,7 @@ export function TimeSelectStep() {
               disabled={!isAvailable}
             >
               <View
-                className={`flex-row items-center justify-between p-4 mb-2 rounded-button border-2 ${
+                className={`mb-2 flex-row items-center justify-between rounded-button border-2 p-4 ${
                   isSelected
                     ? 'border-primary bg-primary-50'
                     : isAvailable
@@ -80,7 +80,10 @@ export function TimeSelectStep() {
                 }`}
               >
                 <View className="flex-row items-center">
-                  <Clock size={18} color={isAvailable ? COLORS.primary.DEFAULT : COLORS.neutral[400]} />
+                  <Clock
+                    size={18}
+                    color={isAvailable ? COLORS.primary.DEFAULT : COLORS.neutral[400]}
+                  />
                   <StyledText variant="body-lg" className="ml-3 font-medium">
                     {item.startTime} - {item.endTime}
                   </StyledText>
@@ -95,14 +98,14 @@ export function TimeSelectStep() {
         }}
         scrollEnabled={false}
         ListEmptyComponent={
-          <StyledText variant="body-md" className="text-neutral-500 text-center py-8">
+          <StyledText variant="body-md" className="py-8 text-center text-neutral-500">
             선택 가능한 시간대가 없습니다.
           </StyledText>
         }
       />
 
       {createHold.error && (
-        <StyledText variant="body-sm" className="text-error text-center mt-2">
+        <StyledText variant="body-sm" className="mt-2 text-center text-error">
           슬롯 선점에 실패했습니다. 다른 시간을 선택해주세요.
         </StyledText>
       )}

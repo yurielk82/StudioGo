@@ -15,7 +15,7 @@ interface MonthlyViewProps {
 
 export function MonthlyView({ year, month, selectedDate, onSelectDate }: MonthlyViewProps) {
   const { data } = useMonthlyCalendar(year, month);
-  const todayStr = toKSTDateString(todayKST());
+  const todayStr = todayKST();
 
   const reservationMap = useMemo(() => {
     const map = new Map<string, { count: number; statuses: string[] }>();
@@ -44,7 +44,7 @@ export function MonthlyView({ year, month, selectedDate, onSelectDate }: Monthly
   return (
     <View>
       {/* 요일 헤더 */}
-      <View className="flex-row mb-2">
+      <View className="mb-2 flex-row">
         {DAYS_KO.map((day, i) => (
           <View key={day} className="flex-1 items-center py-1">
             <StyledText
@@ -61,7 +61,7 @@ export function MonthlyView({ year, month, selectedDate, onSelectDate }: Monthly
       <View className="flex-row flex-wrap">
         {calendarDays.map((dateStr, i) => {
           if (!dateStr) {
-            return <View key={`empty-${i}`} className="w-[14.28%] h-14" />;
+            return <View key={`empty-${i}`} className="h-14 w-[14.28%]" />;
           }
 
           const isSelected = selectedDate === dateStr;
@@ -73,20 +73,16 @@ export function MonthlyView({ year, month, selectedDate, onSelectDate }: Monthly
             <Pressable
               key={dateStr}
               onPress={() => onSelectDate(dateStr)}
-              className="w-[14.28%] h-14 items-center justify-center"
+              className="h-14 w-[14.28%] items-center justify-center"
             >
               <View
-                className={`w-10 h-10 rounded-full items-center justify-center ${
-                  isSelected
-                    ? 'bg-primary'
-                    : isToday
-                      ? 'border-2 border-primary'
-                      : ''
+                className={`h-10 w-10 items-center justify-center rounded-full ${
+                  isSelected ? 'bg-primary' : isToday ? 'border-2 border-primary' : ''
                 }`}
               >
                 <StyledText
                   variant="body-sm"
-                  className={isSelected ? 'text-white font-semibold' : ''}
+                  className={isSelected ? 'font-semibold text-white' : ''}
                 >
                   {String(dayNum)}
                 </StyledText>
@@ -94,11 +90,11 @@ export function MonthlyView({ year, month, selectedDate, onSelectDate }: Monthly
 
               {/* 예약 표시 점 */}
               {info && (
-                <View className="flex-row gap-0.5 mt-0.5">
+                <View className="mt-0.5 flex-row gap-0.5">
                   {info.statuses.slice(0, 3).map((status, si) => (
                     <View
                       key={si}
-                      className="w-1.5 h-1.5 rounded-full"
+                      className="h-1.5 w-1.5 rounded-full"
                       style={{
                         backgroundColor:
                           status === 'APPROVED'

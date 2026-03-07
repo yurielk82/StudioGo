@@ -1,15 +1,8 @@
 import { View, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import {
-  Calendar,
-  Users,
-  ClipboardCheck,
-  Package,
-  Clock,
-  ChevronRight,
-} from 'lucide-react-native';
+import { Calendar, Users, ClipboardCheck, Package, Clock } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Badge, COLORS } from '@/design-system';
-import { useOperatorDashboard, useApproveReservation, useRejectReservation } from '@/hooks/useOperator';
+import { useOperatorDashboard, useApproveReservation } from '@/hooks/useOperator';
 import { Button } from '@/design-system';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -42,22 +35,20 @@ export default function OperatorDashboardScreen() {
       </StyledText>
 
       {/* 통계 카드 */}
-      <View className="flex-row flex-wrap gap-3 mb-6">
-        <GlassCard className="flex-1 min-w-[45%] p-4">
-          <View className="flex-row items-center mb-2">
+      <View className="mb-6 flex-row flex-wrap gap-3">
+        <GlassCard className="min-w-[45%] flex-1 p-4">
+          <View className="mb-2 flex-row items-center">
             <Calendar size={18} color={COLORS.primary.DEFAULT} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
               오늘 예약
             </StyledText>
           </View>
-          <StyledText variant="display-sm">
-            {String(data?.todayReservations ?? 0)}
-          </StyledText>
+          <StyledText variant="display-sm">{String(data?.todayReservations ?? 0)}</StyledText>
         </GlassCard>
 
-        <GlassCard className="flex-1 min-w-[45%] p-4">
-          <View className="flex-row items-center mb-2">
-            <Clock size={18} color={COLORS.warning.DEFAULT} />
+        <GlassCard className="min-w-[45%] flex-1 p-4">
+          <View className="mb-2 flex-row items-center">
+            <Clock size={18} color={COLORS.warning} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
               승인 대기
             </StyledText>
@@ -67,55 +58,59 @@ export default function OperatorDashboardScreen() {
           </StyledText>
         </GlassCard>
 
-        <GlassCard className="flex-1 min-w-[45%] p-4">
-          <View className="flex-row items-center mb-2">
+        <GlassCard className="min-w-[45%] flex-1 p-4">
+          <View className="mb-2 flex-row items-center">
             <ClipboardCheck size={18} color={COLORS.success} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
               오늘 체크인
             </StyledText>
           </View>
-          <StyledText variant="display-sm">
-            {String(data?.todayCheckins ?? 0)}
-          </StyledText>
+          <StyledText variant="display-sm">{String(data?.todayCheckins ?? 0)}</StyledText>
         </GlassCard>
 
-        <GlassCard className="flex-1 min-w-[45%] p-4">
-          <View className="flex-row items-center mb-2">
+        <GlassCard className="min-w-[45%] flex-1 p-4">
+          <View className="mb-2 flex-row items-center">
             <Users size={18} color={COLORS.secondary.DEFAULT} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
               활성 스튜디오
             </StyledText>
           </View>
-          <StyledText variant="display-sm">
-            {String(data?.activeStudios ?? 0)}
-          </StyledText>
+          <StyledText variant="display-sm">{String(data?.activeStudios ?? 0)}</StyledText>
         </GlassCard>
       </View>
 
       {/* 빠른 메뉴 */}
-      <View className="flex-row gap-3 mb-6">
+      <View className="mb-6 flex-row gap-3">
         <Pressable onPress={() => router.push('/(operator)/reservations')} className="flex-1">
-          <GlassCard className="p-3 items-center">
+          <GlassCard className="items-center p-3">
             <Calendar size={20} color={COLORS.primary.DEFAULT} />
-            <StyledText variant="label-sm" className="mt-1">예약 관리</StyledText>
+            <StyledText variant="label-sm" className="mt-1">
+              예약 관리
+            </StyledText>
           </GlassCard>
         </Pressable>
         <Pressable onPress={() => router.push('/(operator)/members')} className="flex-1">
-          <GlassCard className="p-3 items-center">
+          <GlassCard className="items-center p-3">
             <Users size={20} color={COLORS.primary.DEFAULT} />
-            <StyledText variant="label-sm" className="mt-1">회원 관리</StyledText>
+            <StyledText variant="label-sm" className="mt-1">
+              회원 관리
+            </StyledText>
           </GlassCard>
         </Pressable>
         <Pressable onPress={() => router.push('/(operator)/checkin')} className="flex-1">
-          <GlassCard className="p-3 items-center">
+          <GlassCard className="items-center p-3">
             <ClipboardCheck size={20} color={COLORS.primary.DEFAULT} />
-            <StyledText variant="label-sm" className="mt-1">체크인</StyledText>
+            <StyledText variant="label-sm" className="mt-1">
+              체크인
+            </StyledText>
           </GlassCard>
         </Pressable>
         <Pressable onPress={() => router.push('/(operator)/fulfillment')} className="flex-1">
-          <GlassCard className="p-3 items-center">
+          <GlassCard className="items-center p-3">
             <Package size={20} color={COLORS.primary.DEFAULT} />
-            <StyledText variant="label-sm" className="mt-1">출고</StyledText>
+            <StyledText variant="label-sm" className="mt-1">
+              출고
+            </StyledText>
           </GlassCard>
         </Pressable>
       </View>
@@ -128,8 +123,8 @@ export default function OperatorDashboardScreen() {
         data={data?.recentReservations?.filter((r) => r.status === 'PENDING') ?? []}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <GlassCard className="p-4 mb-2">
-            <View className="flex-row justify-between items-start mb-2">
+          <GlassCard className="mb-2 p-4">
+            <View className="mb-2 flex-row items-start justify-between">
               <View>
                 <StyledText variant="body-lg" className="font-medium">
                   {item.userName}
@@ -140,7 +135,7 @@ export default function OperatorDashboardScreen() {
               </View>
               <Badge variant="warning">{STATUS_LABEL[item.status] ?? item.status}</Badge>
             </View>
-            <View className="flex-row gap-2 mt-2">
+            <View className="mt-2 flex-row gap-2">
               <Button
                 size="sm"
                 onPress={() => approve.mutate(item.id)}
@@ -162,7 +157,7 @@ export default function OperatorDashboardScreen() {
         )}
         scrollEnabled={false}
         ListEmptyComponent={
-          <StyledText variant="body-md" className="text-neutral-400 text-center py-4">
+          <StyledText variant="body-md" className="py-4 text-center text-neutral-400">
             대기 중인 예약이 없습니다.
           </StyledText>
         }
