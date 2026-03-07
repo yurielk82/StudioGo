@@ -1,7 +1,7 @@
 // Vercel Build Output API를 사용하여 CJS 번들 생성
 // ESM→CJS 변환으로 Vercel 서버리스 런타임 호환성 확보
 import { build } from 'esbuild';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -26,8 +26,6 @@ await build({
   absWorkingDir: resolve(__dirname, '../..'),
   // CJS default export를 module.exports에 직접 할당
   footer: { js: 'if(module.exports.default)module.exports=module.exports.default;' },
-  // 디버그: 번들 소스 식별 배너
-  banner: { js: '/* ESBUILD_BUNDLE_MARKER_v1 */' },
 });
 
 // 함수 디렉토리에 CJS 명시 (상위 package.json의 "type": "module" 오버라이드)
@@ -60,4 +58,8 @@ writeFileSync(
   }),
 );
 
-console.log('Vercel build complete: CJS bundle created');
+// api/ 디렉토리 삭제: @vercel/node Zero Config이 api/index.ts를 감지하여
+// tsc 컴파일로 Build Output API 번들을 덮어쓰는 것을 방지
+rmSync(resolve(__dirname, 'api'), { recursive: true, force: true });
+
+console.log('Vercel build complete: CJS bundle created, api/ source removed');
