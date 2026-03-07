@@ -28,19 +28,19 @@ BJ(방송인)가 스튜디오를 빌려 라이브커머스 방송을 하고, 창
 | Phase | 내용 | 상태 |
 |-------|------|------|
 | 0 | 문서 8종 + 폴더 구조 + 인프라 | 완료 (d55b1a7) |
-| 1 | 모바일 디자인 시스템 | 대기 |
+| 1 | 모바일 디자인 시스템 | 완료 (a616286) |
 | 2 | shared/contracts (enums, Zod schemas) | 완료 (5dc45a6) |
 | 3 | shared/db (28개 테이블, migrations, seeds) | 완료 (5dc45a6) |
 | 4 | shared/domain (state machines, policies, calculators) | 완료 (5dc45a6) |
 | 5 | API 서버 (repositories, services, auth, cron) | 완료 (92104b3) |
-| 6 | 인증 UI (카카오 로그인, 회원가입, guards) | 대기 |
-| 7 | 예약 플로우 (5단계 위자드, 상세, waitlist) | 대기 |
-| 8 | 캘린더 3종 (월/주/일) | 대기 |
-| 9 | 운영자 화면 전체 | 대기 |
-| 10 | 관리자 패널 전체 | 대기 |
-| 11 | 알림 시스템 (jobs, cron, push) | 대기 |
-| 12 | 통계/대시보드 | 대기 |
-| 13 | QA/안정화/배포 | 대기 |
+| 6 | 인증 UI (카카오 로그인, 회원가입, guards) | 완료 (744bdcb) |
+| 7 | 예약 플로우 (5단계 위자드, 상세, waitlist) | 완료 (4a5b5bf) |
+| 8 | 캘린더 3종 (월/주/일) | 완료 (a922228) |
+| 9 | 운영자 화면 전체 | 완료 (894bda9) |
+| 10 | 관리자 패널 전체 | 완료 (e7d8340) |
+| 11 | 알림 시스템 (jobs, cron, push) | 완료 (d8cfc7f) |
+| 12 | 통계/대시보드 | 완료 (90df1b9) |
+| 13 | QA/안정화/배포 | 완료 |
 
 ## DB 테이블 (28개)
 users, operator_permissions, studios, operation_settings, time_slots,
