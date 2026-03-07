@@ -6,7 +6,9 @@ import {
   KakaoLoginRequestSchema,
   KakaoCallbackRequestSchema,
   SignupRequestSchema,
+  RefreshRequestSchema,
 } from '../../../../shared/contracts/schemas/auth';
+import { IdParamSchema } from '../../../../shared/contracts/api-response';
 
 const auth = new Hono();
 
@@ -63,6 +65,21 @@ auth.get('/sessions', requireAuth, async (c) => {
   const user = getAuthUser(c);
   const sessions = await authService.getSessions(user.userId);
   return success(c, sessions);
+});
+
+// POST /auth/refresh — 토큰 갱신
+auth.post('/refresh', async (c) => {
+  const body = RefreshRequestSchema.parse(await c.req.json());
+  const result = await authService.refreshToken(body.refreshToken);
+  return success(c, result);
+});
+
+// DELETE /auth/sessions/:id — 세션 해제
+auth.delete('/sessions/:id', requireAuth, async (c) => {
+  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const user = getAuthUser(c);
+  await authService.revokeSession(id, user.userId);
+  return success(c, { message: '세션이 해제되었습니다.' });
 });
 
 export default auth;

@@ -147,6 +147,95 @@ export const reservationRepository = {
       .where(eq(reservationServices.reservationId, reservationId));
   },
 
+  async findAll(filters: {
+    page: number;
+    limit: number;
+    status?: string;
+    studioId?: string;
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+  }) {
+    const { page, limit, status, studioId, userId, startDate, endDate, search } = filters;
+    const offset = (page - 1) * limit;
+
+    const conditions = [];
+    if (status)
+      conditions.push(
+        eq(reservations.status, status as (typeof reservations.status.enumValues)[number]),
+      );
+    if (studioId) conditions.push(eq(reservations.studioId, studioId));
+    if (userId) conditions.push(eq(reservations.userId, userId));
+    if (startDate) conditions.push(sql`${reservations.date} >= ${startDate}`);
+    if (endDate) conditions.push(sql`${reservations.date} <= ${endDate}`);
+    if (search) {
+      conditions.push(sql`${reservations.reservationNumber} ILIKE ${'%' + search + '%'}`);
+    }
+
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [items, countResult] = await Promise.all([
+      db
+        .select({
+          reservation: reservations,
+          userName: users.name,
+          userNickname: users.nickname,
+          studioName: studios.name,
+        })
+        .from(reservations)
+        .innerJoin(users, eq(reservations.userId, users.id))
+        .innerJoin(studios, eq(reservations.studioId, studios.id))
+        .where(where)
+        .orderBy(sql`${reservations.createdAt} DESC`)
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(reservations)
+        .where(where),
+    ]);
+
+    return { items, total: countResult[0]?.count ?? 0 };
+  },
+
+  async findByUserId(userId: string, page: number, limit: number) {
+    const offset = (page - 1) * limit;
+
+    const [items, countResult] = await Promise.all([
+      db
+        .select({
+          reservation: reservations,
+          studioName: studios.name,
+        })
+        .from(reservations)
+        .innerJoin(studios, eq(reservations.studioId, studios.id))
+        .where(eq(reservations.userId, userId))
+        .orderBy(sql`${reservations.createdAt} DESC`)
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(reservations)
+        .where(eq(reservations.userId, userId)),
+    ]);
+
+    return { items, total: countResult[0]?.count ?? 0 };
+  },
+
+  async countStats(userId: string) {
+    const result = await db
+      .select({
+        status: reservations.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(reservations)
+      .where(eq(reservations.userId, userId))
+      .groupBy(reservations.status);
+
+    return result;
+  },
+
   /** daily_counters에서 원자적으로 예약번호 순번 증가 */
   async getNextDailySequence(date: string): Promise<number> {
     const key = `reservation_${date}`;

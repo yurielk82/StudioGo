@@ -111,6 +111,45 @@ export const authService = {
     return updated;
   },
 
+  /** 토큰 갱신 */
+  async refreshToken(refreshToken: string) {
+    // refresh token 검증
+    let payload;
+    try {
+      const { payload: verified } = await import('../lib/jwt').then((m) =>
+        m.verifyToken(refreshToken),
+      );
+      payload = verified;
+    } catch {
+      throw ApiError.unauthorized('AUTH_TOKEN_EXPIRED', '토큰이 만료되었습니다.');
+    }
+
+    const userId = payload.sub as string;
+    const user = await userRepository.findById(userId);
+    if (!user) throw ApiError.notFound('MEMBER_NOT_FOUND', '사용자를 찾을 수 없습니다.');
+
+    // 새 토큰 발급
+    const tokenPayload = {
+      userId: user.id,
+      role: user.role,
+      status: user.status,
+      tier: user.tier,
+    };
+
+    const [newAccessToken, newRefreshToken] = await Promise.all([
+      createAccessToken(tokenPayload),
+      createRefreshToken(tokenPayload),
+    ]);
+
+    return {
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        expiresIn: 900,
+      },
+    };
+  },
+
   /** 로그아웃 */
   async logout(sessionId: string) {
     await sessionRepository.revoke(sessionId);
@@ -119,6 +158,16 @@ export const authService = {
   /** 내 세션 목록 */
   async getSessions(userId: string) {
     return sessionRepository.findByUserId(userId);
+  },
+
+  /** 세션 해제 */
+  async revokeSession(sessionId: string, userId: string) {
+    const session = await sessionRepository.findById(sessionId);
+    if (!session) throw ApiError.notFound('GENERAL_NOT_FOUND', '세션을 찾을 수 없습니다.');
+    if (session.userId !== userId) {
+      throw ApiError.forbidden('PERMISSION_DENIED', '본인의 세션만 해제할 수 있습니다.');
+    }
+    await sessionRepository.revoke(sessionId);
   },
 };
 

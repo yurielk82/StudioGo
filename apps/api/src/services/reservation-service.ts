@@ -225,6 +225,123 @@ export const reservationService = {
     });
   },
 
+  /** 예약 목록 조회 (필터) */
+  async list(filters: {
+    page: number;
+    limit: number;
+    status?: string;
+    studioId?: string;
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+  }) {
+    return reservationRepository.findAll(filters);
+  },
+
+  /** 예약 상세 조회 */
+  async getById(id: string) {
+    const result = await reservationRepository.findByIdWithDetails(id);
+    if (!result) throw ApiError.notFound('RESERVATION_NOT_FOUND', '예약을 찾을 수 없습니다.');
+
+    const [statusHistory, services] = await Promise.all([
+      reservationRepository.getStatusHistory(id),
+      reservationRepository.getServices(id),
+    ]);
+
+    return { ...result, statusHistory, services };
+  },
+
+  /** 내 예약 목록 */
+  async getMyReservations(userId: string, page: number, limit: number) {
+    return reservationRepository.findByUserId(userId, page, limit);
+  },
+
+  /** 내 통계 */
+  async getMyStats(userId: string) {
+    const stats = await reservationRepository.countStats(userId);
+    const broadcastCount = await userRepository.getBroadcastCount(userId);
+    const user = await userRepository.findById(userId);
+
+    const statusMap = new Map(stats.map((s) => [s.status, s.count]));
+
+    return {
+      totalReservations: [...statusMap.values()].reduce((a, b) => a + b, 0),
+      completedBroadcasts: broadcastCount,
+      noShowCount: statusMap.get('NO_SHOW') ?? 0,
+      cancelledCount: statusMap.get('CANCELLED') ?? 0,
+      noShowRate: broadcastCount > 0 ? ((statusMap.get('NO_SHOW') ?? 0) / broadcastCount) * 100 : 0,
+      currentTier: user?.tier ?? 'BRONZE',
+    };
+  },
+
+  /** 방송 완료 */
+  async complete(
+    reservationId: string,
+    operatorId: string,
+    _data: {
+      actualStartTime?: string;
+      actualEndTime?: string;
+      rating?: number;
+      operatorNote?: string;
+      servicesUsed?: unknown;
+    },
+  ) {
+    const reservation = await reservationRepository.findById(reservationId);
+    if (!reservation) throw ApiError.notFound('RESERVATION_NOT_FOUND', '예약을 찾을 수 없습니다.');
+
+    reservationStateMachine.transition(reservation.status as 'APPROVED', 'COMPLETED');
+
+    await reservationRepository.updateStatus(reservationId, 'COMPLETED', {
+      completedAt: new Date(),
+    });
+
+    // 슬롯 상태 → COMPLETED
+    await slotRepository.updateStatus(reservation.timeSlotId, 'COMPLETED');
+
+    await reservationRepository.addStatusHistory({
+      reservationId,
+      fromStatus: reservation.status,
+      toStatus: 'COMPLETED',
+      changedByUserId: operatorId,
+    });
+
+    // 방송 이력 기록은 별도 broadcast-history 리포지토리에서 처리
+    // (Phase 5에서 추가 구현 시)
+  },
+
+  /** 노쇼 처리 */
+  async noShow(reservationId: string, operatorId: string) {
+    const reservation = await reservationRepository.findById(reservationId);
+    if (!reservation) throw ApiError.notFound('RESERVATION_NOT_FOUND', '예약을 찾을 수 없습니다.');
+
+    reservationStateMachine.transition(reservation.status as 'APPROVED', 'NO_SHOW');
+
+    await reservationRepository.updateStatus(reservationId, 'NO_SHOW');
+
+    // 슬롯 해제
+    await slotRepository.updateStatus(reservation.timeSlotId, 'AVAILABLE');
+
+    await reservationRepository.addStatusHistory({
+      reservationId,
+      fromStatus: reservation.status,
+      toStatus: 'NO_SHOW',
+      changedByUserId: operatorId,
+    });
+
+    // 노쇼 알림
+    await notificationRepository.createJob({
+      eventType: 'NO_SHOW',
+      payload: {
+        reservationId,
+        reservationNumber: reservation.reservationNumber,
+        userId: reservation.userId,
+      },
+      idempotencyKey: `no_show_${reservationId}`,
+      relatedReservationId: reservationId,
+    });
+  },
+
   /** 예약 취소 */
   async cancel(
     reservationId: string,

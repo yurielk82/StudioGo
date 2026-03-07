@@ -84,24 +84,160 @@ export const notificationService = {
   },
 
   /**
-   * 리마인더 발송 — 방송 1시간 전 예약건
+   * 리마인더 발송 — 방송 시작 전 예약건
    */
   async processReminders(): Promise<number> {
-    return 0;
+    const { eq, and } = await import('drizzle-orm');
+    const { db } = await import('../../../../shared/db/index');
+    const { reservations, users, studios } = await import('../../../../shared/db/schema');
+    const { settingsRepository } = await import('../repositories/settings-repository');
+
+    const reminderMinutes = await settingsRepository.get('reminder_before_minutes');
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]!;
+
+    // 오늘 승인된 예약 중 방송 시작이 임박한 건 조회
+    const upcomingReservations = await db
+      .select({
+        id: reservations.id,
+        reservationNumber: reservations.reservationNumber,
+        userId: reservations.userId,
+        userName: users.name,
+        studioName: studios.name,
+        date: reservations.date,
+        startTime: reservations.startTime,
+        endTime: reservations.endTime,
+      })
+      .from(reservations)
+      .innerJoin(users, eq(reservations.userId, users.id))
+      .innerJoin(studios, eq(reservations.studioId, studios.id))
+      .where(and(eq(reservations.date, today), eq(reservations.status, 'APPROVED')));
+
+    let sent = 0;
+    for (const reservation of upcomingReservations) {
+      // 시작 시간을 KST Date로 변환
+      const [hours, minutes] = reservation.startTime.split(':').map(Number);
+      const startDate = new Date(`${today}T00:00:00+09:00`);
+      startDate.setHours(hours!, minutes!);
+
+      const timeDiff = startDate.getTime() - now.getTime();
+      const diffMinutes = timeDiff / (60 * 1000);
+
+      // reminderMinutes 이내이고 아직 시작 전인 경우
+      if (diffMinutes > 0 && diffMinutes <= reminderMinutes) {
+        await notificationRepository.createJob({
+          eventType: 'BROADCAST_REMINDER',
+          payload: {
+            reservationId: reservation.id,
+            reservationNumber: reservation.reservationNumber,
+            userId: reservation.userId,
+            userName: reservation.userName,
+            studioName: reservation.studioName,
+            date: reservation.date,
+            startTime: reservation.startTime,
+          },
+          idempotencyKey: `reminder_${reservation.id}_${today}`,
+          relatedReservationId: reservation.id,
+        });
+        sent++;
+      }
+    }
+
+    return sent;
   },
 
   /**
    * 일일 요약 — 운영자에게 오늘의 예약 요약
    */
   async processDailySummary(): Promise<number> {
-    return 0;
+    const { eq, sql } = await import('drizzle-orm');
+    const { db } = await import('../../../../shared/db/index');
+    const { reservations, users } = await import('../../../../shared/db/schema');
+
+    const today = new Date().toISOString().split('T')[0]!;
+
+    // 오늘 예약 통계
+    const stats = await db
+      .select({
+        status: reservations.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(reservations)
+      .where(eq(reservations.date, today))
+      .groupBy(reservations.status);
+
+    // 운영자 목록
+    const operators = await db
+      .select({ id: users.id, name: users.name })
+      .from(users)
+      .where(sql`${users.role} IN ('OPERATOR', 'ADMIN')`);
+
+    let sent = 0;
+    for (const operator of operators) {
+      await notificationRepository.createJob({
+        eventType: 'DAILY_SUMMARY',
+        payload: {
+          userId: operator.id,
+          userName: operator.name,
+          date: today,
+          stats: Object.fromEntries(stats.map((s) => [s.status, s.count])),
+        },
+        idempotencyKey: `daily_summary_${operator.id}_${today}`,
+      });
+      sent++;
+    }
+
+    return sent;
   },
 
   /**
    * 주간 리포트 — 관리자에게 주간 통계
    */
   async processWeeklyReport(): Promise<number> {
-    return 0;
+    const { eq, and, sql } = await import('drizzle-orm');
+    const { db } = await import('../../../../shared/db/index');
+    const { reservations, users } = await import('../../../../shared/db/schema');
+
+    const today = new Date();
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const startDate = weekAgo.toISOString().split('T')[0]!;
+    const endDate = today.toISOString().split('T')[0]!;
+
+    // 주간 예약 통계
+    const weekStats = await db
+      .select({
+        status: reservations.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(reservations)
+      .where(
+        and(sql`${reservations.date} >= ${startDate}`, sql`${reservations.date} <= ${endDate}`),
+      )
+      .groupBy(reservations.status);
+
+    // 관리자 목록
+    const admins = await db
+      .select({ id: users.id, name: users.name })
+      .from(users)
+      .where(eq(users.role, 'ADMIN'));
+
+    let sent = 0;
+    for (const admin of admins) {
+      await notificationRepository.createJob({
+        eventType: 'WEEKLY_REPORT',
+        payload: {
+          userId: admin.id,
+          userName: admin.name,
+          startDate,
+          endDate,
+          stats: Object.fromEntries(weekStats.map((s) => [s.status, s.count])),
+        },
+        idempotencyKey: `weekly_report_${admin.id}_${endDate}`,
+      });
+      sent++;
+    }
+
+    return sent;
   },
 };
 

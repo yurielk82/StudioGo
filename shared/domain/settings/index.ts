@@ -6,7 +6,7 @@ interface OperatingHours {
   end: string;
 }
 
-interface TierThresholds {
+export interface TierThresholds {
   SILVER: number;
   GOLD: number;
   PLATINUM: number;

@@ -1,3 +1,11 @@
 export { authService } from './auth-service';
 export { reservationService } from './reservation-service';
 export { slotService } from './slot-service';
+export { studioService } from './studio-service';
+export { memberService } from './member-service';
+export { adminService } from './admin-service';
+export { operatorService } from './operator-service';
+export { calendarService } from './calendar-service';
+export { waitlistService } from './waitlist-service';
+export { assetService } from './asset-service';
+export { notificationService } from './notification-service';
