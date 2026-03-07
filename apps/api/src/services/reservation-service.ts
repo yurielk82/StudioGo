@@ -11,10 +11,10 @@ import {
   isWithinBookingWindow,
   canCancelReservation,
   generateReservationNumber,
-} from '@domain/reservation';
-import { timeSlotStateMachine } from '@domain/slot';
-import { kstToUTC, todayKST } from '@domain/date-time';
-import type { CreateReservationRequest, ReservationStatus } from '@studiogo/shared/contracts';
+} from '../../../../shared/domain/reservation';
+import { timeSlotStateMachine } from '../../../../shared/domain/slot';
+import { kstToUTC, todayKST } from '../../../../shared/domain/date-time';
+import type { CreateReservationRequest, ReservationStatus } from '../../../../shared/contracts';
 
 export const reservationService = {
   /** 예약 생성 */
@@ -60,7 +60,10 @@ export const reservationService = {
     if (data.holdToken) {
       const hold = await slotRepository.findHoldByToken(data.holdToken);
       if (!hold || hold.status !== 'ACTIVE' || hold.userId !== userId) {
-        throw ApiError.badRequest('RESERVATION_HOLD_EXPIRED', 'Hold가 만료되었거나 유효하지 않습니다.');
+        throw ApiError.badRequest(
+          'RESERVATION_HOLD_EXPIRED',
+          'Hold가 만료되었거나 유효하지 않습니다.',
+        );
       }
       await slotRepository.consumeHold(data.holdToken);
     }
@@ -250,10 +253,7 @@ export const reservationService = {
       }
     }
 
-    reservationStateMachine.transition(
-      reservation.status as 'PENDING' | 'APPROVED',
-      'CANCELLED',
-    );
+    reservationStateMachine.transition(reservation.status as 'PENDING' | 'APPROVED', 'CANCELLED');
 
     await reservationRepository.updateStatus(reservationId, 'CANCELLED', {
       cancelledAt: new Date(),

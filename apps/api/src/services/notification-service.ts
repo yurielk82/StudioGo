@@ -1,7 +1,7 @@
 import { notificationRepository } from '../repositories/notification-repository';
 import { sendSinglePush } from '../lib/expo-push';
 import { sendAlimtalk } from '../lib/kakao-bizmessage';
-import type { NotificationEventType } from '@studiogo/shared/contracts';
+import type { NotificationEventType } from '../../../../shared/contracts';
 
 const MAX_RETRY_COUNT = 3;
 const BATCH_SIZE = 50;

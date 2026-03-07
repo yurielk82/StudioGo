@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import type { PaginationMeta } from '@studiogo/shared/contracts';
+import type { PaginationMeta } from '../../../../shared/contracts';
 
 export function success<T>(c: Context, data: T, meta?: PaginationMeta) {
   return c.json({
@@ -23,13 +23,7 @@ export function noContent(c: Context) {
   return c.body(null, 204);
 }
 
-export function paginated<T>(
-  c: Context,
-  data: T[],
-  total: number,
-  page: number,
-  limit: number,
-) {
+export function paginated<T>(c: Context, data: T[], total: number, page: number, limit: number) {
   const totalPages = Math.ceil(total / limit);
   return c.json({
     success: true as const,

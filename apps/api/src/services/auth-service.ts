@@ -3,7 +3,7 @@ import { userRepository } from '../repositories/user-repository';
 import { sessionRepository } from '../repositories/session-repository';
 import { notificationRepository } from '../repositories/notification-repository';
 import { ApiError } from '../lib/api-error';
-import type { SignupRequest, LoginResponse } from '@studiogo/shared/contracts';
+import type { SignupRequest, LoginResponse } from '../../../../shared/contracts';
 
 const KAKAO_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
 const KAKAO_TOKEN_URL = 'https://kauth.kakao.com/oauth/token';

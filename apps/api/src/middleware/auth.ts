@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono';
 import { jwtVerify } from 'jose';
 import { ApiError } from '../lib/api-error';
-import type { UserRole } from '@studiogo/shared/contracts';
+import type { UserRole } from '../../../../shared/contracts';
 
 // JWT payload에서 추출되는 사용자 컨텍스트
 export interface AuthUser {

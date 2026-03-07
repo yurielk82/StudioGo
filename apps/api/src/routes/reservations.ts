@@ -7,8 +7,8 @@ import {
   CancelReservationRequestSchema,
   RejectReservationRequestSchema,
   BatchApproveRequestSchema,
-} from '@contracts/schemas/reservation';
-import { IdParamSchema } from '@contracts/api-response';
+} from '../../../../shared/contracts/schemas/reservation';
+import { IdParamSchema } from '../../../../shared/contracts/api-response';
 
 const reservationsRoute = new Hono();
 

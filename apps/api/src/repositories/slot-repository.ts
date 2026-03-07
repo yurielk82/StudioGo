@@ -1,7 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '@db';
-import { timeSlots, slotHolds } from '@db/schema';
-import type { TimeSlotStatus } from '@studiogo/shared/contracts';
+import { db } from '../../../../shared/db/index';
+import { timeSlots, slotHolds } from '../../../../shared/db/schema';
+import type { TimeSlotStatus } from '../../../../shared/contracts';
 
 export const slotRepository = {
   async findById(id: string) {

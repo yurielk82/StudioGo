@@ -6,7 +6,7 @@ import {
   SlotListQuerySchema,
   CreateHoldRequestSchema,
   GenerateSlotsRequestSchema,
-} from '@contracts/schemas/slot';
+} from '../../../../shared/contracts/schemas/slot';
 
 const slotsRoute = new Hono();
 

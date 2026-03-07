@@ -1,13 +1,13 @@
 import { eq, and, sql, lte } from 'drizzle-orm';
-import { db } from '@db';
+import { db } from '../../../../shared/db/index';
 import {
   notificationJobs,
   notificationLogs,
   appNotifications,
   pushTokens,
   notificationSettings,
-} from '@db/schema';
-import type { NotificationEventType, NotificationJobStatus } from '@studiogo/shared/contracts';
+} from '../../../../shared/db/schema';
+import type { NotificationEventType, NotificationJobStatus } from '../../../../shared/contracts';
 
 export const notificationRepository = {
   async createJob(data: {

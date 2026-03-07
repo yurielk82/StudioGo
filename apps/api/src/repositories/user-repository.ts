@@ -1,23 +1,15 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '@db';
-import { users, broadcastHistory } from '@db/schema';
+import { db } from '../../../../shared/db/index';
+import { users, broadcastHistory } from '../../../../shared/db/schema';
 
 export const userRepository = {
   async findByKakaoId(kakaoId: string) {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.kakaoId, kakaoId))
-      .limit(1);
+    const result = await db.select().from(users).where(eq(users.kakaoId, kakaoId)).limit(1);
     return result[0] ?? null;
   },
 
   async findById(id: string) {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
+    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0] ?? null;
   },
 
@@ -90,7 +82,11 @@ export const userRepository = {
       .where(eq(users.id, userId));
   },
 
-  async updateStatus(userId: string, status: 'PENDING' | 'APPROVED' | 'SUSPENDED' | 'WITHDRAWN', approvedBy?: string) {
+  async updateStatus(
+    userId: string,
+    status: 'PENDING' | 'APPROVED' | 'SUSPENDED' | 'WITHDRAWN',
+    approvedBy?: string,
+  ) {
     await db
       .update(users)
       .set({
@@ -102,22 +98,14 @@ export const userRepository = {
   },
 
   async updateTier(userId: string, tier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM' | 'DIAMOND') {
-    await db
-      .update(users)
-      .set({ tier, updatedAt: new Date() })
-      .where(eq(users.id, userId));
+    await db.update(users).set({ tier, updatedAt: new Date() }).where(eq(users.id, userId));
   },
 
   async getBroadcastCount(userId: string): Promise<number> {
     const result = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(broadcastHistory)
-      .where(
-        and(
-          eq(broadcastHistory.userId, userId),
-          eq(broadcastHistory.status, 'COMPLETED'),
-        ),
-      );
+      .where(and(eq(broadcastHistory.userId, userId), eq(broadcastHistory.status, 'COMPLETED')));
     return result[0]?.count ?? 0;
   },
 };

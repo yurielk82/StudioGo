@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@db';
-import { operationSettings } from '@db/schema';
-import type { SettingsKey, SettingsMap } from '@domain/settings';
-import { SETTINGS_DEFAULTS, parseSettingValue } from '@domain/settings';
+import { db } from '../../../../shared/db/index';
+import { operationSettings } from '../../../../shared/db/schema';
+import type { SettingsKey, SettingsMap } from '../../../../shared/domain/settings';
+import { SETTINGS_DEFAULTS, parseSettingValue } from '../../../../shared/domain/settings';
 
 export const settingsRepository = {
   async get<K extends SettingsKey>(key: K): Promise<SettingsMap[K]> {
@@ -18,7 +18,9 @@ export const settingsRepository = {
     return parseSettingValue(key, row.value);
   },
 
-  async getAll(): Promise<Array<{ key: string; value: unknown; description: string | null; category: string | null }>> {
+  async getAll(): Promise<
+    Array<{ key: string; value: unknown; description: string | null; category: string | null }>
+  > {
     return db.select().from(operationSettings);
   },
 

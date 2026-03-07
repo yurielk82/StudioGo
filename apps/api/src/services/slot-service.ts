@@ -1,8 +1,8 @@
 import { slotRepository } from '../repositories/slot-repository';
 import { settingsRepository } from '../repositories/settings-repository';
 import { ApiError } from '../lib/api-error';
-import { generateSlots } from '@domain/slot';
-import { dateRange } from '@domain/date-time';
+import { generateSlots } from '../../../../shared/domain/slot';
+import { dateRange } from '../../../../shared/domain/date-time';
 
 export const slotService = {
   /** 특정 날짜의 슬롯 조회 */

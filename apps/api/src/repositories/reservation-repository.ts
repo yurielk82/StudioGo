@@ -1,5 +1,5 @@
 import { eq, and, sql, inArray } from 'drizzle-orm';
-import { db } from '@db';
+import { db } from '../../../../shared/db/index';
 import {
   reservations,
   reservationStatusHistory,
@@ -8,8 +8,8 @@ import {
   users,
   studios,
   additionalServices,
-} from '@db/schema';
-import type { ReservationStatus } from '@studiogo/shared/contracts';
+} from '../../../../shared/db/schema';
+import type { ReservationStatus } from '../../../../shared/contracts';
 
 export const reservationRepository = {
   async findById(id: string) {

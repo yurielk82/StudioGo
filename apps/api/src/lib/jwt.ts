@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
-import type { UserRole, Tier, UserStatus } from '@studiogo/shared/contracts';
+import type { UserRole, Tier, UserStatus } from '../../../../shared/contracts';
 
 interface TokenPayload {
   userId: string;

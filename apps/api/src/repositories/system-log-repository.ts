@@ -1,5 +1,5 @@
-import { db } from '@db';
-import { systemLogs } from '@db/schema';
+import { db } from '../../../../shared/db/index';
+import { systemLogs } from '../../../../shared/db/schema';
 
 export const systemLogRepository = {
   async create(data: {

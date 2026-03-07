@@ -6,7 +6,7 @@ import {
   KakaoLoginRequestSchema,
   KakaoCallbackRequestSchema,
   SignupRequestSchema,
-} from '@contracts/schemas/auth';
+} from '../../../../shared/contracts/schemas/auth';
 
 const auth = new Hono();
 
