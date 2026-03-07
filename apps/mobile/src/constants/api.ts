@@ -2,7 +2,7 @@
  * API 경로 상수 — 하드코딩 fetch URL 금지
  */
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001/api';
 
 export const API_ROUTES = {
   // 인증

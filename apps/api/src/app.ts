@@ -8,7 +8,7 @@ import slotsRoutes from './routes/slots';
 import cronRoutes from './routes/cron';
 import notificationsRoutes from './routes/notifications';
 
-const app = new Hono();
+const app = new Hono().basePath('/api');
 
 // 글로벌 에러 핸들러 + 미들웨어
 app.onError(errorHandler);

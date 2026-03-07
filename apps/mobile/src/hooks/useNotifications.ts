@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { QUERY_KEYS } from '@/constants/api';
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001/api';
 
 interface AppNotification {
   id: string;
@@ -37,8 +37,7 @@ export function useMarkAsRead() {
 export function useMarkAllAsRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () =>
-      apiClient<void>(`${API_BASE}/notifications/read-all`, { method: 'POST' }),
+    mutationFn: () => apiClient<void>(`${API_BASE}/notifications/read-all`, { method: 'POST' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.notifications.all }),
   });
 }

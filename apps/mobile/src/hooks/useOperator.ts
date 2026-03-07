@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { QUERY_KEYS } from '@/constants/api';
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001/api';
 
 interface DashboardData {
   todayReservations: number;
@@ -149,7 +149,12 @@ export function useFulfillmentTasks(params?: { status?: string }) {
 export function useUpdateFulfillment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (params: { id: string; status: string; courier?: string; trackingNumber?: string }) =>
+    mutationFn: (params: {
+      id: string;
+      status: string;
+      courier?: string;
+      trackingNumber?: string;
+    }) =>
       apiClient<void>(`${API_BASE}/operator/fulfillment/${params.id}`, {
         method: 'PATCH',
         body: JSON.stringify(params),

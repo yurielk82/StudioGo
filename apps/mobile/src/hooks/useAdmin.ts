@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001/api';
 
 interface OperationSetting {
   key: string;
