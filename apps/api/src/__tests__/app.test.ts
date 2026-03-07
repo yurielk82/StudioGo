@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import app from '../app';
 
 describe('API 헬스체크', () => {
-  it('GET / — 정상 응답', async () => {
-    const res = await app.request('/');
+  it('GET /api — 정상 응답', async () => {
+    const res = await app.request('/api');
     expect(res.status).toBe(200);
 
     const data = (await res.json()) as {
@@ -17,8 +17,8 @@ describe('API 헬스체크', () => {
 });
 
 describe('인증 라우트 — 비인증 요청 거부', () => {
-  it('GET /auth/me — 토큰 없이 요청 시 401', async () => {
-    const res = await app.request('/auth/me');
+  it('GET /api/auth/me — 토큰 없이 요청 시 401', async () => {
+    const res = await app.request('/api/auth/me');
     expect(res.status).toBe(401);
 
     const data = (await res.json()) as { success: boolean; error: { code: string } };
@@ -26,13 +26,13 @@ describe('인증 라우트 — 비인증 요청 거부', () => {
     expect(data.error.code).toBe('AUTH_INVALID_TOKEN');
   });
 
-  it('POST /auth/logout — 토큰 없이 요청 시 401', async () => {
-    const res = await app.request('/auth/logout', { method: 'POST' });
+  it('POST /api/auth/logout — 토큰 없이 요청 시 401', async () => {
+    const res = await app.request('/api/auth/logout', { method: 'POST' });
     expect(res.status).toBe(401);
   });
 
-  it('POST /auth/signup — 토큰 없이 요청 시 401', async () => {
-    const res = await app.request('/auth/signup', {
+  it('POST /api/auth/signup — 토큰 없이 요청 시 401', async () => {
+    const res = await app.request('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'test' }),
@@ -42,8 +42,8 @@ describe('인증 라우트 — 비인증 요청 거부', () => {
 });
 
 describe('예약 라우트', () => {
-  it('POST /reservations — 토큰 없이 요청 시 401', async () => {
-    const res = await app.request('/reservations', {
+  it('POST /api/reservations — 토큰 없이 요청 시 401', async () => {
+    const res = await app.request('/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -54,7 +54,7 @@ describe('예약 라우트', () => {
 
 describe('CORS', () => {
   it('OPTIONS 프리플라이트 응답', async () => {
-    const res = await app.request('/', {
+    const res = await app.request('/api', {
       method: 'OPTIONS',
       headers: {
         Origin: 'http://localhost:8081',
