@@ -27,12 +27,12 @@ BJ(방송인)가 스튜디오를 빌려 라이브커머스 방송을 하고, 창
 
 | Phase | 내용 | 상태 |
 |-------|------|------|
-| 0 | 문서 8종 + 폴더 구조 + 인프라 | 완료 |
+| 0 | 문서 8종 + 폴더 구조 + 인프라 | 완료 (d55b1a7) |
 | 1 | 모바일 디자인 시스템 | 대기 |
-| 2 | shared/contracts (enums, Zod schemas) | 대기 |
-| 3 | shared/db (28개 테이블, migrations, seeds) | 대기 |
-| 4 | shared/domain (state machines, policies, calculators) | 대기 |
-| 5 | API 서버 (repositories, services, auth, cron) | 대기 |
+| 2 | shared/contracts (enums, Zod schemas) | 완료 (5dc45a6) |
+| 3 | shared/db (28개 테이블, migrations, seeds) | 완료 (5dc45a6) |
+| 4 | shared/domain (state machines, policies, calculators) | 완료 (5dc45a6) |
+| 5 | API 서버 (repositories, services, auth, cron) | 완료 (92104b3) |
 | 6 | 인증 UI (카카오 로그인, 회원가입, guards) | 대기 |
 | 7 | 예약 플로우 (5단계 위자드, 상세, waitlist) | 대기 |
 | 8 | 캘린더 3종 (월/주/일) | 대기 |
