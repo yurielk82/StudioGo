@@ -1,5 +1,7 @@
-// shared/contracts — Zod 스키마, DTO, enum
+// shared/contracts — Zod 스키마, DTO, enum, 에러 코드
 // 클라이언트-서버 공유
-// Phase 2에서 enums, schemas, response types 구현
 
-export {};
+export * from './enums';
+export * from './api-response';
+export * from './error-codes';
+export * from './schemas';
