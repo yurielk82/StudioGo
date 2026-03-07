@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 
 /**
- * 운영자 화면 그룹 — Phase 9에서 대시보드/예약관리/체크인 구현
+ * 운영자 화면 그룹 — Stack 네비게이션
  */
 export default function OperatorLayout() {
   return (
@@ -10,6 +10,12 @@ export default function OperatorLayout() {
         headerShown: false,
         animation: 'slide_from_right',
       }}
-    />
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="reservations" />
+      <Stack.Screen name="members" />
+      <Stack.Screen name="checkin" />
+      <Stack.Screen name="fulfillment" />
+    </Stack>
   );
 }
