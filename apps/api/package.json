@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
+    "vercel-build": "node build-vercel.mjs",
     "start": "node dist/server.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "drizzle-kit": "^0.28.0",
+    "esbuild": "^0.21.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
   }
