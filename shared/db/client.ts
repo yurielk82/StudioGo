@@ -3,20 +3,31 @@ import postgres from 'postgres';
 import * as schema from './schema';
 import * as relations from './relations';
 
-const connectionString = process.env.DATABASE_URL;
+let _db: ReturnType<typeof drizzle> | null = null;
 
-if (!connectionString) {
-  throw new Error('DATABASE_URL 환경변수가 설정되지 않았습니다.');
+function getConnectionString(): string {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error('DATABASE_URL 환경변수가 설정되지 않았습니다.');
+  }
+  return url;
 }
 
-const client = postgres(connectionString, {
-  max: 10,
-  idle_timeout: 20,
-  connect_timeout: 10,
+/** Lazy-initialized DB 인스턴스 — 첫 쿼리 시점에 연결 */
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    if (!_db) {
+      const client = postgres(getConnectionString(), {
+        max: 10,
+        idle_timeout: 20,
+        connect_timeout: 10,
+      });
+      _db = drizzle(client, {
+        schema: { ...schema, ...relations },
+      });
+    }
+    return Reflect.get(_db, prop);
+  },
 });
 
-export const db = drizzle(client, {
-  schema: { ...schema, ...relations },
-});
-
-export type Database = typeof db;
+export type Database = ReturnType<typeof drizzle>;
