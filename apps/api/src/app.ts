@@ -2,10 +2,16 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { serve } from '@hono/node-server';
+import { errorHandler } from './middleware/error-handler';
+import authRoutes from './routes/auth';
+import reservationsRoutes from './routes/reservations';
+import slotsRoutes from './routes/slots';
+import cronRoutes from './routes/cron';
 
 const app = new Hono();
 
-// 미들웨어
+// 글로벌 미들웨어
+app.use('*', errorHandler);
 app.use('*', logger());
 app.use(
   '*',
@@ -27,10 +33,11 @@ app.get('/', (c) => {
   });
 });
 
-// 라우트 등록은 Phase 5에서 추가
-// app.route('/auth', authRoutes);
-// app.route('/reservations', reservationRoutes);
-// ...
+// 라우트 등록
+app.route('/auth', authRoutes);
+app.route('/reservations', reservationsRoutes);
+app.route('/slots', slotsRoutes);
+app.route('/cron', cronRoutes);
 
 // 개발 서버
 const port = Number(process.env.PORT) ?? 3001;
