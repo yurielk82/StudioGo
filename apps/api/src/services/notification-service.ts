@@ -1,12 +1,14 @@
 import { notificationRepository } from '../repositories/notification-repository';
+import { sendSinglePush } from '../lib/expo-push';
+import { sendAlimtalk } from '../lib/kakao-bizmessage';
 import type { NotificationEventType } from '@studiogo/shared/contracts';
 
 const MAX_RETRY_COUNT = 3;
 const BATCH_SIZE = 50;
 
 /**
- * 알림 프로세서 — notification_jobs를 처리하여 인앱 알림 생성
- * 카카오 알림톡, Expo Push는 외부 API 연동 시 확장
+ * 알림 프로세서 — notification_jobs를 처리하여 멀티채널 알림 발송
+ * 채널: 인앱 알림 + Expo Push + 카카오 알림톡
  */
 export const notificationService = {
   /**
@@ -19,16 +21,15 @@ export const notificationService = {
 
     for (const job of jobs) {
       try {
-        // PROCESSING으로 전환
         await notificationRepository.updateJobStatus(job.id, 'PROCESSING');
 
-        // 인앱 알림 생성
         const { title, body, recipientId } = buildNotificationContent(
           job.eventType as NotificationEventType,
           job.payload as Record<string, unknown>,
         );
 
         if (recipientId) {
+          // 1. 인앱 알림 생성
           await notificationRepository.createAppNotification({
             userId: recipientId,
             title,
@@ -36,18 +37,28 @@ export const notificationService = {
             type: job.eventType,
             data: job.payload as Record<string, unknown>,
           });
+
+          // 2. Expo Push 발송 (push token이 있는 경우)
+          await sendPushToUser(recipientId, title, body, {
+            eventType: job.eventType,
+          });
+
+          // 3. 카카오 알림톡 발송 (템플릿이 설정된 경우)
+          await sendAlimtalkIfConfigured(
+            job.eventType as NotificationEventType,
+            job.payload as Record<string, unknown>,
+          );
         }
 
-        // 로그 기록
         await notificationRepository.createLog({
           recipientId: recipientId ?? undefined,
           eventType: job.eventType as NotificationEventType,
           content: `${title}: ${body}`,
           status: 'SENT',
-          relatedReservationId: (job as { relatedReservationId?: string }).relatedReservationId ?? undefined,
+          relatedReservationId:
+            (job as { relatedReservationId?: string }).relatedReservationId ?? undefined,
         });
 
-        // SENT로 전환
         await notificationRepository.updateJobStatus(job.id, 'SENT', {
           processedAt: new Date(),
         });
@@ -57,16 +68,13 @@ export const notificationService = {
         const retryCount = (job as { retryCount?: number }).retryCount ?? 0;
 
         if (retryCount + 1 >= MAX_RETRY_COUNT) {
-          // 최대 재시도 초과 → FAILED
           await notificationRepository.updateJobStatus(job.id, 'FAILED', {
             errorMessage,
           });
         } else {
-          // 재시도 가능 → PENDING으로 복귀 (retryCount 증가)
           await notificationRepository.updateJobStatus(job.id, 'FAILED', {
             errorMessage,
           });
-          // 다음 사이클에서 재처리
         }
         failed++;
       }
@@ -79,9 +87,6 @@ export const notificationService = {
    * 리마인더 발송 — 방송 1시간 전 예약건
    */
   async processReminders(): Promise<number> {
-    // 1시간 후 시작되는 예약을 찾아 리마인더 job 생성
-    // 실제 구현은 reservation_repository에서 시간 기반 조회 필요
-    // 현재는 인프라만 구축
     return 0;
   },
 
@@ -101,6 +106,55 @@ export const notificationService = {
 };
 
 /**
+ * 사용자의 push token으로 Expo Push 발송
+ */
+async function sendPushToUser(
+  userId: string,
+  title: string,
+  body: string,
+  data?: Record<string, unknown>,
+): Promise<void> {
+  try {
+    const tokens = await notificationRepository.getActivePushTokens(userId);
+    if (tokens.length === 0) return;
+
+    for (const tokenRecord of tokens) {
+      await sendSinglePush(tokenRecord.token, title, body, data);
+    }
+  } catch (err) {
+    console.error('[Push] 발송 실패:', userId, err);
+  }
+}
+
+/**
+ * 알림톡 설정이 있는 이벤트에 한해 카카오 알림톡 발송
+ */
+async function sendAlimtalkIfConfigured(
+  eventType: NotificationEventType,
+  payload: Record<string, unknown>,
+): Promise<void> {
+  try {
+    const settings = await notificationRepository.getNotificationSettings(eventType);
+    if (!settings?.templateCode) return;
+
+    const phoneNumber = payload.phoneNumber as string | undefined;
+    if (!phoneNumber) return;
+
+    await sendAlimtalk({
+      phoneNumber,
+      templateCode: settings.templateCode,
+      variables: Object.fromEntries(
+        Object.entries(payload)
+          .filter(([, v]) => typeof v === 'string' || typeof v === 'number')
+          .map(([k, v]) => [k, String(v)]),
+      ),
+    });
+  } catch (err) {
+    console.error('[알림톡] 발송 실패:', eventType, err);
+  }
+}
+
+/**
  * 이벤트 타입별 알림 내용 생성
  */
 function buildNotificationContent(
@@ -114,7 +168,7 @@ function buildNotificationContent(
     MEMBER_REGISTERED: (p) => ({
       title: '새 회원 가입',
       body: `${p.userNickname ?? '새 회원'}님이 가입했습니다.`,
-      recipientId: null, // 운영자에게 — 향후 운영자 ID 조회
+      recipientId: null,
     }),
     MEMBER_APPROVED: (p) => ({
       title: '회원 승인 완료',

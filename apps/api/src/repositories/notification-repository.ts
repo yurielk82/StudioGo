@@ -1,6 +1,12 @@
 import { eq, and, sql, lte } from 'drizzle-orm';
 import { db } from '@db';
-import { notificationJobs, notificationLogs, appNotifications } from '@db/schema';
+import {
+  notificationJobs,
+  notificationLogs,
+  appNotifications,
+  pushTokens,
+  notificationSettings,
+} from '@db/schema';
 import type { NotificationEventType, NotificationJobStatus } from '@studiogo/shared/contracts';
 
 export const notificationRepository = {
@@ -31,10 +37,7 @@ export const notificationRepository = {
       .select()
       .from(notificationJobs)
       .where(
-        and(
-          eq(notificationJobs.status, 'PENDING'),
-          lte(notificationJobs.scheduledAt, new Date()),
-        ),
+        and(eq(notificationJobs.status, 'PENDING'), lte(notificationJobs.scheduledAt, new Date())),
       )
       .orderBy(notificationJobs.scheduledAt)
       .limit(limit);
@@ -51,9 +54,7 @@ export const notificationRepository = {
         status,
         ...(extra?.errorMessage ? { errorMessage: extra.errorMessage } : {}),
         ...(extra?.processedAt ? { processedAt: extra.processedAt } : {}),
-        ...(status === 'FAILED'
-          ? { retryCount: sql`${notificationJobs.retryCount} + 1` }
-          : {}),
+        ...(status === 'FAILED' ? { retryCount: sql`${notificationJobs.retryCount} + 1` } : {}),
         updatedAt: new Date(),
       })
       .where(eq(notificationJobs.id, id));
@@ -107,20 +108,29 @@ export const notificationRepository = {
     await db
       .update(appNotifications)
       .set({ isRead: true, readAt: new Date(), updatedAt: new Date() })
-      .where(
-        and(eq(appNotifications.id, id), eq(appNotifications.userId, userId)),
-      );
+      .where(and(eq(appNotifications.id, id), eq(appNotifications.userId, userId)));
   },
 
   async markAllAsRead(userId: string) {
     await db
       .update(appNotifications)
       .set({ isRead: true, readAt: new Date(), updatedAt: new Date() })
-      .where(
-        and(
-          eq(appNotifications.userId, userId),
-          eq(appNotifications.isRead, false),
-        ),
-      );
+      .where(and(eq(appNotifications.userId, userId), eq(appNotifications.isRead, false)));
+  },
+
+  async getActivePushTokens(userId: string) {
+    return db
+      .select({ token: pushTokens.token, platform: pushTokens.platform })
+      .from(pushTokens)
+      .where(and(eq(pushTokens.userId, userId), eq(pushTokens.isActive, true)));
+  },
+
+  async getNotificationSettings(eventType: NotificationEventType) {
+    const result = await db
+      .select()
+      .from(notificationSettings)
+      .where(eq(notificationSettings.eventType, eventType))
+      .limit(1);
+    return result[0] ?? null;
   },
 };

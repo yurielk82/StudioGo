@@ -1,8 +1,10 @@
 {
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
   "crons": [
     { "path": "/cron/reminders", "schedule": "*/5 * * * *" },
     { "path": "/cron/daily-summary", "schedule": "0 8 * * *" },
     { "path": "/cron/weekly-report", "schedule": "0 9 * * 1" },
-    { "path": "/cron/expire-holds", "schedule": "* * * * *" }
+    { "path": "/cron/expire-holds", "schedule": "* * * * *" },
+    { "path": "/cron/process-notifications", "schedule": "*/2 * * * *" }
   ]
 }

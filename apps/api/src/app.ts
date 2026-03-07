@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { serve } from '@hono/node-server';
 import { errorHandler } from './middleware/error-handler';
 import authRoutes from './routes/auth';
 import reservationsRoutes from './routes/reservations';
@@ -28,7 +27,7 @@ app.get('/', (c) => {
     success: true,
     data: {
       service: 'StudioGo API',
-      version: '0.1.0',
+      version: '0.9.1',
       status: 'healthy',
     },
   });
@@ -40,15 +39,5 @@ app.route('/reservations', reservationsRoutes);
 app.route('/slots', slotsRoutes);
 app.route('/cron', cronRoutes);
 app.route('/notifications', notificationsRoutes);
-
-// 개발 서버
-const port = Number(process.env.PORT) ?? 3001;
-
-serve({
-  fetch: app.fetch,
-  port,
-});
-
-console.warn(`StudioGo API 서버 실행 중: http://localhost:${port}`);
 
 export default app;
