@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 
 /**
- * 관리자 화면 그룹 — Phase 10에서 설정/스튜디오/회원관리 구현
+ * 관리자 화면 그룹 — Stack 네비게이션
  */
 export default function AdminLayout() {
   return (
@@ -10,6 +10,16 @@ export default function AdminLayout() {
         headerShown: false,
         animation: 'slide_from_right',
       }}
-    />
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen name="studios" />
+      <Stack.Screen name="blackouts" />
+      <Stack.Screen name="announcements" />
+      <Stack.Screen name="notification-settings" />
+      <Stack.Screen name="permissions" />
+      <Stack.Screen name="feature-flags" />
+      <Stack.Screen name="logs" />
+    </Stack>
   );
 }
