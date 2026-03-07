@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"],
+    "paths": {
+      "@domain/*": ["../../shared/domain/*"],
+      "@domain": ["../../shared/domain"],
+      "@contracts/*": ["../../shared/contracts/*"],
+      "@contracts": ["../../shared/contracts"],
+      "@db/*": ["../../shared/db/*"],
+      "@db": ["../../shared/db"],
+      "@constants/*": ["../../shared/constants/*"],
+      "@constants": ["../../shared/constants"]
+    }
+  },
+  "include": ["src/**/*", "../../shared/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

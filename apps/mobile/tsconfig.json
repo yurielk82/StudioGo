@@ -1,0 +1,18 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@domain/*": ["../../shared/domain/*"],
+      "@domain": ["../../shared/domain"],
+      "@contracts/*": ["../../shared/contracts/*"],
+      "@contracts": ["../../shared/contracts"],
+      "@constants/*": ["../../shared/constants/*"],
+      "@constants": ["../../shared/constants"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../../shared/domain/**/*", "../../shared/contracts/**/*", "../../shared/constants/**/*"],
+  "exclude": ["node_modules"]
+}
