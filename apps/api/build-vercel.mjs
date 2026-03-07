@@ -28,6 +28,12 @@ await build({
   footer: { js: 'if(module.exports.default)module.exports=module.exports.default;' },
 });
 
+// 함수 디렉토리에 CJS 명시 (상위 package.json의 "type": "module" 오버라이드)
+writeFileSync(
+  resolve(FUNC_DIR, 'package.json'),
+  JSON.stringify({ type: 'commonjs' }),
+);
+
 // 함수 설정
 writeFileSync(
   resolve(FUNC_DIR, '.vc-config.json'),
