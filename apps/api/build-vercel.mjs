@@ -1,7 +1,7 @@
 // Vercel Build Output API를 사용하여 CJS 번들 생성
 // ESM→CJS 변환으로 Vercel 서버리스 런타임 호환성 확보
 import { build } from 'esbuild';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
