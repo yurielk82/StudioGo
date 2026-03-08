@@ -1,6 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { timeSlots, slotHolds } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { TimeSlotStatus } from '../../../../shared/contracts';
 
 export const slotRepository = {
@@ -88,7 +89,7 @@ export const slotRepository = {
       })
       .returning();
 
-    return result[0]!;
+    return firstRow(result);
   },
 
   async findHoldByToken(holdToken: string) {

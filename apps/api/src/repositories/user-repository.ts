@@ -1,6 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { users, broadcastHistory } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 
 export const userRepository = {
   async findByKakaoId(kakaoId: string) {
@@ -28,7 +29,7 @@ export const userRepository = {
         profileImage: data.profileImage,
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async updateSignup(
@@ -55,7 +56,7 @@ export const userRepository = {
       })
       .where(eq(users.id, userId))
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async isNicknameTaken(nickname: string, excludeUserId?: string) {

@@ -1,6 +1,7 @@
 import { eq, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { studioBlackouts, studios, users } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { CreateBlackoutRequest } from '../../../../shared/contracts';
 
 export const blackoutRepository = {
@@ -37,7 +38,7 @@ export const blackoutRepository = {
         createdBy,
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async delete(id: string) {

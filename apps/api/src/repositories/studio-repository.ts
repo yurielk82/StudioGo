@@ -1,6 +1,7 @@
 import { eq, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { studios } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { CreateStudioRequest, UpdateStudioRequest } from '../../../../shared/contracts';
 
 export const studioRepository = {
@@ -30,7 +31,7 @@ export const studioRepository = {
         sortOrder: data.sortOrder,
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async update(id: string, data: UpdateStudioRequest) {

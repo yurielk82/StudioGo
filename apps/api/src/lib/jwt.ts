@@ -27,7 +27,7 @@ function parseDuration(duration: string): number {
     d: 86400,
   };
 
-  return num * (multipliers[unit!] ?? 60);
+  return num * (multipliers[unit ?? 's'] ?? 60);
 }
 
 export async function createAccessToken(payload: TokenPayload): Promise<string> {

@@ -1,6 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { authSessions } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 
 export const sessionRepository = {
   async create(data: {
@@ -13,7 +14,7 @@ export const sessionRepository = {
     expiresAt: Date;
   }) {
     const result = await db.insert(authSessions).values(data).returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async findById(id: string) {

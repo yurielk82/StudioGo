@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { additionalServices } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { CreateServiceRequest, UpdateServiceRequest } from '../../../../shared/contracts';
 
 export const serviceRepository = {
@@ -37,7 +38,7 @@ export const serviceRepository = {
         sortOrder: data.sortOrder,
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async update(id: string, data: UpdateServiceRequest) {

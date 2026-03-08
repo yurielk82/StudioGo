@@ -94,7 +94,7 @@ export const notificationService = {
 
     const reminderMinutes = await settingsRepository.get('reminder_before_minutes');
     const now = new Date();
-    const today = now.toISOString().split('T')[0]!;
+    const today = now.toISOString().substring(0, 10);
 
     // 오늘 승인된 예약 중 방송 시작이 임박한 건 조회
     const upcomingReservations = await db
@@ -118,7 +118,7 @@ export const notificationService = {
       // 시작 시간을 KST Date로 변환
       const [hours, minutes] = reservation.startTime.split(':').map(Number);
       const startDate = new Date(`${today}T00:00:00+09:00`);
-      startDate.setHours(hours!, minutes!);
+      startDate.setHours(hours ?? 0, minutes ?? 0);
 
       const timeDiff = startDate.getTime() - now.getTime();
       const diffMinutes = timeDiff / (60 * 1000);
@@ -154,7 +154,7 @@ export const notificationService = {
     const { db } = await import('../../../../shared/db/index');
     const { reservations, users } = await import('../../../../shared/db/schema');
 
-    const today = new Date().toISOString().split('T')[0]!;
+    const today = new Date().toISOString().substring(0, 10);
 
     // 오늘 예약 통계
     const stats = await db
@@ -200,8 +200,8 @@ export const notificationService = {
 
     const today = new Date();
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const startDate = weekAgo.toISOString().split('T')[0]!;
-    const endDate = today.toISOString().split('T')[0]!;
+    const startDate = weekAgo.toISOString().substring(0, 10);
+    const endDate = today.toISOString().substring(0, 10);
 
     // 주간 예약 통계
     const weekStats = await db

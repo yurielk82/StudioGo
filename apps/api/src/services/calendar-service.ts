@@ -80,11 +80,12 @@ export const calendarService = {
       const dateStr =
         typeof row.date === 'string'
           ? row.date
-          : new Date(row.date as unknown as string).toISOString().split('T')[0]!;
+          : new Date(row.date as unknown as string).toISOString().substring(0, 10);
       if (!slotMap.has(dateStr)) {
         slotMap.set(dateStr, { total: 0, available: 0, reserved: 0, blocked: 0 });
       }
-      const entry = slotMap.get(dateStr)!;
+      const entry = slotMap.get(dateStr);
+      if (!entry) continue;
       entry.total += row.count;
       if (row.status === 'AVAILABLE') entry.available += row.count;
       else if (row.status === 'RESERVED' || row.status === 'IN_USE') entry.reserved += row.count;
@@ -101,8 +102,8 @@ export const calendarService = {
 
     const blackoutDates = new Set<string>();
     for (const bo of blackouts) {
-      const start = new Date(bo.startAt).toISOString().split('T')[0]!;
-      const end = new Date(bo.endAt).toISOString().split('T')[0]!;
+      const start = new Date(bo.startAt).toISOString().substring(0, 10);
+      const end = new Date(bo.endAt).toISOString().substring(0, 10);
       const range = dateRange(start > startDate ? start : startDate, end < endDate ? end : endDate);
       range.forEach((d) => blackoutDates.add(d));
     }
@@ -179,10 +180,10 @@ export const calendarService = {
       reservation: s.reservationId
         ? {
             id: s.reservationId,
-            reservationNumber: s.reservationNumber!,
-            userName: s.userName!,
-            userNickname: s.userNickname!,
-            status: s.reservationStatus!,
+            reservationNumber: s.reservationNumber ?? '',
+            userName: s.userName ?? '',
+            userNickname: s.userNickname ?? '',
+            status: s.reservationStatus ?? '',
           }
         : null,
     }));
@@ -237,7 +238,7 @@ export const calendarService = {
           slots: [],
         });
       }
-      studioMap.get(slot.studioId)!.slots.push(slot);
+      studioMap.get(slot.studioId)?.slots.push(slot);
     }
 
     return [...studioMap.values()].map((studio) => ({
@@ -255,10 +256,10 @@ export const calendarService = {
         reservation: s.reservationId
           ? {
               id: s.reservationId,
-              reservationNumber: s.reservationNumber!,
-              userName: s.userName!,
-              userNickname: s.userNickname!,
-              status: s.reservationStatus!,
+              reservationNumber: s.reservationNumber ?? '',
+              userName: s.userName ?? '',
+              userNickname: s.userNickname ?? '',
+              status: s.reservationStatus ?? '',
             }
           : null,
       })),

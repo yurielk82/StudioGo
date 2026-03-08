@@ -226,7 +226,7 @@ export function useOperatorList() {
 export function useOperatorPermissions(operatorId: string | null) {
   return useQuery({
     queryKey: QUERY_KEYS.admin.permissions(operatorId ?? ''),
-    queryFn: () => apiClient<OperatorPermissions>(API_ROUTES.ADMIN.permissions(operatorId!)),
+    queryFn: () => apiClient<OperatorPermissions>(API_ROUTES.ADMIN.permissions(operatorId ?? '')),
     enabled: !!operatorId,
   });
 }

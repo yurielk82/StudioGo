@@ -13,7 +13,7 @@ export function nowKST(): Date {
 /** UTC Date를 KST YYYY-MM-DD 문자열로 변환 */
 export function toKSTDateString(date: Date): string {
   const kst = new Date(date.getTime() + TIMEZONE_OFFSET_MS);
-  return kst.toISOString().split('T')[0]!;
+  return kst.toISOString().substring(0, 10);
 }
 
 /** UTC Date를 KST HH:mm 문자열로 변환 */
@@ -52,7 +52,7 @@ export function diffMinutes(start: Date, end: Date): number {
 export function addDays(dateStr: string, days: number): string {
   const date = new Date(`${dateStr}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().split('T')[0]!;
+  return date.toISOString().substring(0, 10);
 }
 
 /** 날짜 범위 생성 (시작일 ~ 종료일 포함) */

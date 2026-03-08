@@ -1,6 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { reservationWaitlists, studios } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { CreateWaitlistRequest } from '../../../../shared/contracts';
 
 export const waitlistRepository = {
@@ -15,7 +16,7 @@ export const waitlistRepository = {
         status: 'ACTIVE',
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async findById(id: string) {

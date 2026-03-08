@@ -37,7 +37,7 @@ export const reservationService = {
       maxAdvanceBookingDays: maxDays,
     });
     if (!bookingCheck.allowed) {
-      throw ApiError.badRequest('RESERVATION_SLOT_UNAVAILABLE', bookingCheck.reason!);
+      throw ApiError.badRequest('RESERVATION_SLOT_UNAVAILABLE', bookingCheck.reason ?? '예약 불가');
     }
 
     // 3. 하루 최대 예약 수 확인
@@ -47,7 +47,7 @@ export const reservationService = {
       maxSlotsPerDayPerMember: maxSlots,
     });
     if (!maxCheck.allowed) {
-      throw ApiError.badRequest('RESERVATION_MAX_PER_DAY', maxCheck.reason!);
+      throw ApiError.badRequest('RESERVATION_MAX_PER_DAY', maxCheck.reason ?? '예약 불가');
     }
 
     // 4. 슬롯 확인
@@ -366,7 +366,7 @@ export const reservationService = {
       });
 
       if (!cancelCheck.allowed) {
-        throw ApiError.badRequest('RESERVATION_CANCEL_DEADLINE', cancelCheck.reason!);
+        throw ApiError.badRequest('RESERVATION_CANCEL_DEADLINE', cancelCheck.reason ?? '취소 불가');
       }
     }
 

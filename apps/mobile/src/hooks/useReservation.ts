@@ -84,9 +84,10 @@ export function useMyReservations(params?: { status?: string; page?: number }) {
       const searchParams = new URLSearchParams();
       if (params?.status) searchParams.set('status', params.status);
       if (params?.page) searchParams.set('page', String(params.page));
-      return apiClient<{ items: ReservationSummary[]; meta: { total: number; page: number; limit: number } }>(
-        `${API_ROUTES.RESERVATIONS.BASE}?${searchParams.toString()}`,
-      );
+      return apiClient<{
+        items: ReservationSummary[];
+        meta: { total: number; page: number; limit: number };
+      }>(`${API_ROUTES.RESERVATIONS.BASE}?${searchParams.toString()}`);
     },
   });
 }
@@ -97,7 +98,7 @@ export function useMyReservations(params?: { status?: string; page?: number }) {
 export function useReservationDetail(id: string | null) {
   return useQuery({
     queryKey: QUERY_KEYS.reservations.byId(id ?? ''),
-    queryFn: () => apiClient<ReservationDetail>(API_ROUTES.RESERVATIONS.byId(id!)),
+    queryFn: () => apiClient<ReservationDetail>(API_ROUTES.RESERVATIONS.byId(id ?? '')),
     enabled: !!id,
   });
 }

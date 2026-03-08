@@ -1,6 +1,7 @@
 import { eq, and } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { checkins, reservations, users, studios } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { CheckinRequest } from '../../../../shared/contracts';
 
 export const checkinRepository = {
@@ -25,7 +26,7 @@ export const checkinRepository = {
         note: data.note,
       })
       .returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async checkout(reservationId: string) {

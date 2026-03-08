@@ -1,5 +1,6 @@
 import { eq, and, sql, inArray } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
+import { firstRow } from '../lib/db-utils';
 import {
   reservations,
   reservationStatusHistory,
@@ -60,7 +61,7 @@ export const reservationRepository = {
     memo?: string;
   }) {
     const result = await db.insert(reservations).values(data).returning();
-    return result[0]!;
+    return firstRow(result);
   },
 
   async updateStatus(
@@ -252,6 +253,6 @@ export const reservationRepository = {
       })
       .returning({ value: dailyCounters.value });
 
-    return result[0]!.value;
+    return firstRow(result).value;
   },
 };

@@ -17,7 +17,7 @@ export interface GeneratedSlot {
 
 function timeToMinutes(time: string): number {
   const [hours, minutes] = time.split(':').map(Number);
-  return hours! * 60 + minutes!;
+  return (hours ?? 0) * 60 + (minutes ?? 0);
 }
 
 function minutesToTime(minutes: number): string {

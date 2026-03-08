@@ -36,7 +36,7 @@ export default function FulfillmentScreen() {
   function getNextStatus(current: string): string | null {
     const idx = STATUS_FLOW.indexOf(current as (typeof STATUS_FLOW)[number]);
     if (idx < 0 || idx >= STATUS_FLOW.length - 1) return null;
-    return STATUS_FLOW[idx + 1]!;
+    return STATUS_FLOW[idx + 1] ?? null;
   }
 
   function handleAdvance(id: string, currentStatus: string) {

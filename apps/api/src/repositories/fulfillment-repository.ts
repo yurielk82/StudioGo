@@ -1,6 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../../../shared/db/index';
 import { fulfillmentTasks, reservations, users } from '../../../../shared/db/schema';
+import { firstRow } from '../lib/db-utils';
 import type { FulfillmentListQuery, UpdateFulfillmentRequest } from '../../../../shared/contracts';
 
 export const fulfillmentRepository = {
@@ -78,6 +79,6 @@ export const fulfillmentRepository = {
 
   async createForReservation(reservationId: string) {
     const result = await db.insert(fulfillmentTasks).values({ reservationId }).returning();
-    return result[0]!;
+    return firstRow(result);
   },
 };
