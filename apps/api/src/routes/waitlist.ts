@@ -3,7 +3,7 @@ import { waitlistService } from '../services/waitlist-service';
 import { requireAuth, requireApproved, getAuthUser } from '../middleware/auth';
 import { success, created, noContent } from '../lib/response';
 import { CreateWaitlistRequestSchema } from '../../../../shared/contracts/schemas/waitlist';
-import { IdParamSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const waitlistRoute = new Hono();
 
@@ -17,7 +17,7 @@ waitlistRoute.post('/', requireAuth, requireApproved, async (c) => {
 
 // DELETE /waitlist/:id — 대기 취소
 waitlistRoute.delete('/:id', requireAuth, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await waitlistService.cancel(id, user.userId);
   return noContent(c);

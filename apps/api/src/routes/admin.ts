@@ -15,7 +15,7 @@ import {
   SystemLogQuerySchema,
   UpdatePermissionsRequestSchema,
 } from '../../../../shared/contracts/schemas/admin';
-import { IdParamSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const adminRoute = new Hono();
 
@@ -57,7 +57,7 @@ adminRoute.post('/blackouts', async (c) => {
 
 // DELETE /admin/blackouts/:id — blackout 삭제
 adminRoute.delete('/blackouts/:id', async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await adminService.deleteBlackout(id, user.userId);
   return noContent(c);
@@ -104,7 +104,7 @@ adminRoute.post('/services', async (c) => {
 
 // PATCH /admin/services/:id — 부가서비스 수정
 adminRoute.patch('/services/:id', async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = UpdateServiceRequestSchema.parse(await c.req.json());
   const service = await adminService.updateService(id, body, user.userId);
@@ -113,7 +113,7 @@ adminRoute.patch('/services/:id', async (c) => {
 
 // DELETE /admin/services/:id — 부가서비스 삭제
 adminRoute.delete('/services/:id', async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await adminService.deleteService(id, user.userId);
   return noContent(c);
@@ -163,7 +163,7 @@ adminRoute.post('/announcements', async (c) => {
 
 // PATCH /admin/announcements/:id — 공지 수정
 adminRoute.patch('/announcements/:id', async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = UpdateAnnouncementRequestSchema.parse(await c.req.json());
   const announcement = await adminService.updateAnnouncement(id, body, user.userId);
@@ -172,7 +172,7 @@ adminRoute.patch('/announcements/:id', async (c) => {
 
 // DELETE /admin/announcements/:id — 공지 삭제
 adminRoute.delete('/announcements/:id', async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await adminService.deleteAnnouncement(id, user.userId);
   return noContent(c);

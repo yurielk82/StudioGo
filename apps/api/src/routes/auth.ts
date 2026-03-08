@@ -8,7 +8,7 @@ import {
   SignupRequestSchema,
   RefreshRequestSchema,
 } from '../../../../shared/contracts/schemas/auth';
-import { IdParamSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const auth = new Hono();
 
@@ -76,7 +76,7 @@ auth.post('/refresh', async (c) => {
 
 // DELETE /auth/sessions/:id — 세션 해제
 auth.delete('/sessions/:id', requireAuth, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await authService.revokeSession(id, user.userId);
   return success(c, { message: '세션이 해제되었습니다.' });

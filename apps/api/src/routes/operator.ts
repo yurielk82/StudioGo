@@ -7,7 +7,7 @@ import {
   UpdateFulfillmentRequestSchema,
   FulfillmentListQuerySchema,
 } from '../../../../shared/contracts/schemas/operator';
-import { IdParamSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const operatorRoute = new Hono();
 
@@ -27,7 +27,7 @@ operatorRoute.post('/checkin', requireAuth, requireOperator, async (c) => {
 
 // POST /operator/checkout/:id — 체크아웃
 operatorRoute.post('/checkout/:id', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await operatorService.checkout(id, user.userId);
   return success(c, { message: '체크아웃이 완료되었습니다.' });
@@ -42,7 +42,7 @@ operatorRoute.get('/fulfillment', requireAuth, requireOperator, async (c) => {
 
 // PATCH /operator/fulfillment/:id — 포장 상태 변경
 operatorRoute.patch('/fulfillment/:id', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = UpdateFulfillmentRequestSchema.parse(await c.req.json());
   const updated = await operatorService.updateFulfillment(id, body, user.userId);

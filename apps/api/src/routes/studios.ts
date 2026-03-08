@@ -6,7 +6,7 @@ import {
   CreateStudioRequestSchema,
   UpdateStudioRequestSchema,
 } from '../../../../shared/contracts/schemas/studio';
-import { IdParamSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const studiosRoute = new Hono();
 
@@ -20,7 +20,7 @@ studiosRoute.get('/', requireAuth, async (c) => {
 
 // GET /studios/:id — 스튜디오 상세
 studiosRoute.get('/:id', requireAuth, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const studio = await studioService.getById(id);
   return success(c, studio);
 });
@@ -35,7 +35,7 @@ studiosRoute.post('/', requireAuth, requireAdmin, async (c) => {
 
 // PATCH /studios/:id — 스튜디오 수정
 studiosRoute.patch('/:id', requireAuth, requireAdmin, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = UpdateStudioRequestSchema.parse(await c.req.json());
   const studio = await studioService.update(id, body, user.userId);
@@ -44,7 +44,7 @@ studiosRoute.patch('/:id', requireAuth, requireAdmin, async (c) => {
 
 // DELETE /studios/:id — 스튜디오 삭제
 studiosRoute.delete('/:id', requireAuth, requireAdmin, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   await studioService.delete(id, user.userId);
   return noContent(c);
@@ -52,7 +52,7 @@ studiosRoute.delete('/:id', requireAuth, requireAdmin, async (c) => {
 
 // PATCH /studios/:id/toggle — 활성화 토글
 studiosRoute.patch('/:id/toggle', requireAuth, requireAdmin, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const studio = await studioService.toggleActive(id, user.userId);
   return success(c, studio);
