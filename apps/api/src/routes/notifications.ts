@@ -11,6 +11,7 @@ import {
   NotificationLogQuerySchema,
 } from '../../../../shared/contracts/schemas/notification';
 import { PaginationRequestSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 import { sendAlimtalk } from '../lib/kakao-bizmessage';
 
 const notificationsRoute = new Hono();
@@ -30,7 +31,7 @@ notificationsRoute.get('/', requireAuth, async (c) => {
 // POST /notifications/:id/read — 읽음 처리
 notificationsRoute.post('/:id/read', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const id = c.req.param('id') ?? '';
+  const id = parseIdParam(c);
   await notificationRepository.markAsRead(id, user.userId);
   return success(c, { message: '읽음 처리 완료' });
 });
