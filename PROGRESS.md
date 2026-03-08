@@ -18,12 +18,22 @@
 | 3   | ✅   | cron: expireHolds() — 이미 구현 완료 확인 (slot-repository.ts) | 확인만  |
 | 4   | ✅   | ESLint 경고: non-null assertion 45개 → 타입 안전 패턴 교체     | 292388e |
 
+| 5 | ✅ | P1 보안: 공개 서비스 API 분리 (admin→services) | 95278fc |
+| 6 | ✅ | P2 에러 바운더리 + fallback UI 추가 | 2279b49 |
+| 7 | ✅ | P3 login.tsx 카카오 버튼 hex 하드코딩 → 시맨틱 토큰 | b3317a3 |
+| 8 | ✅ | P2 테스트: auth API 보안 가드 테스트 12개 | d12a9b3 |
+| 9 | ✅ | P2 테스트: 슬롯+체크인 도메인 테스트 33개 | d12a9b3 |
+| 10 | ✅ | P2 테스트: 티어+정산+설정 도메인 테스트 51개 | d12a9b3 |
+| 11 | ✅ | P2 테스트: 날짜+알림+출고 도메인 테스트 63개 | d12a9b3 |
+| 12 | 🚫 | DEFERRED: QR 스캐너 (expo-camera 의존성 필요) | SOURCE: plan |
+| 13 | 🚫 | DEFERRED: asset-service S3/R2 (aws-sdk 의존성 필요) | SOURCE: plan |
+
 ## 최종 상태
 
 - TypeScript: ✅ 에러 없음
-- 테스트: ✅ 31/31 통과
+- 테스트: ✅ 190/190 통과 (31→190, +159)
 - ESLint: ✅ 에러 0, 경고 0
-- 버전: 1.2.0
+- 버전: 1.3.0
 
 ## 실행 로그
 
