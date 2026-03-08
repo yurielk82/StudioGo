@@ -33,13 +33,16 @@
 | 16 | ✅ | P3 parseIdParam 헬퍼 생성 + 라우트 8곳 적용 | 6346f14 |
 | 17 | ✅ | P3 아이콘 hex 하드코딩 → COLORS 상수 교체 (6곳) | e4639ac |
 | 18 | ✅ | P2 범용 상태머신 테스트 29개 (createStateMachine) | ba397b6 |
+| 19 | ✅ | P3 캘린더 URL 하드코딩 → API_ROUTES + WeeklyView 클릭 연결 | bbdb3fe |
+| 20 | ✅ | P2 라우트 파라미터 Zod 검증 누락 5곳 추가 | 4c3b8f4 |
+| 21 | ✅ | P3 parseIdParam 헬퍼 나머지 19곳 전체 적용 | fbbc2e3 |
 
 ## 현재 상태
 
 - TypeScript: ✅ 에러 없음
 - 테스트: ✅ 219/219 통과
 - ESLint: ✅ 에러 0, 경고 0
-- 버전: 1.3.1
+- 버전: 1.3.2
 
 ## 실행 로그
 
@@ -78,3 +81,16 @@
 ### 태스크 18 — 상태머신 테스트
 
 - [테스트-Sonnet] createStateMachine 29개 테스트 (전이/검증/터미널/에러)
+
+### 태스크 19 — 캘린더 코드 개선
+
+- [구현-Sonnet] useCalendar 훅 URL 하드코딩 → API_ROUTES.CALENDAR 교체
+- [구현-Sonnet] CalendarScreen에서 WeeklyView onSelectSlot 핸들러 연결
+
+### 태스크 20 — 라우트 파라미터 검증 강화
+
+- [구현-Sonnet] admin/notifications/slots 5곳 문자열 param에 Zod 검증 추가
+
+### 태스크 21 — parseIdParam 전체 적용
+
+- [구현-Sonnet] admin/members/studios/auth/operator/waitlist 19곳 IdParamSchema→parseIdParam 교체
