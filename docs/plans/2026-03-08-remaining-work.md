@@ -1,311 +1,185 @@
 # StudioGo 남은 작업 계획
 
 > 작성일: 2026-03-08
-> 기준: API_CONTRACTS.md 대비 실제 구현 갭 분석
+> 최종 업데이트: 2026-03-08 (Phase 1~8 완료 후 재분석)
+> 기준: 실제 코드 분석 결과
 
 ## 현재 구현 상태 요약
 
-### API 서버 (apps/api/src)
+### 완료된 것
 
-- **구현 완료**: auth(6), reservations(5), slots(4), notifications(3), cron(5중 2완료+3스켈레톤)
-- **총 20개 엔드포인트 구현** / API_CONTRACTS.md 기준 82개 중
-- 서비스 4개, 리포지토리 7개, 미들웨어 완료, 라이브러리 완료
+- **API**: 82/82 엔드포인트 100% 구현 (12개 라우트 파일)
+- **DB**: 28개 테이블, 마이그레이션 1개, 시드 7개 완성
+- **모바일**: 31/32 화면 완성 (공개5 + 회원5 + 운영자5 + 관리자10 + 예약위자드5 + 캘린더1)
+- **훅**: 60+개 API 연동 훅 (TanStack Query)
+- **디자인 시스템**: 7개 프리미티브 (Screen, StyledText, Button, GlassCard, Input, Badge, Divider)
+- **인증**: 카카오 OAuth (네이티브+웹) + JWT + AuthGuard
+- **shared/domain**: 상태 머신, 정책, 비즈니스 규칙 95%
+- **코드 품질**: TypeScript 에러 0, ESLint 에러 0, 테스트 31개 통과
+- **배포**: Vercel Serverless 설정 완료, Cron 5개 등록
 
-### 모바일 (apps/mobile)
+### 버전
 
-- **완료율 ~75%**: public(5), member(8), operator(5), admin(7완료+2스켈레톤)
-- hooks 8개 완료, stores 2개 완료, design-system 완료
-- StudioSelectStep/ServicesStep에서 Mock 데이터 사용 중
-
-### shared
-
-- **완료율 ~95%**: domain(22파일), contracts(15파일), db(36파일), constants 완료
-
----
-
-## Phase 1: Studios API
-
-스튜디오는 예약/슬롯의 전제 자원. 가장 먼저 구현.
-
-### 신규 파일
-
-- `apps/api/src/routes/studios.ts`
-- `apps/api/src/services/studio-service.ts`
-- `apps/api/src/repositories/studio-repository.ts`
-
-### 엔드포인트 (6개)
-
-| Method | Path                | 설명          | 권한    |
-| ------ | ------------------- | ------------- | ------- |
-| GET    | /studios            | 스튜디오 목록 | MEMBER+ |
-| GET    | /studios/:id        | 스튜디오 상세 | MEMBER+ |
-| POST   | /studios            | 스튜디오 생성 | ADMIN   |
-| PATCH  | /studios/:id        | 스튜디오 수정 | ADMIN   |
-| DELETE | /studios/:id        | 스튜디오 삭제 | ADMIN   |
-| PATCH  | /studios/:id/toggle | 활성화 토글   | ADMIN   |
-
-### 리포지토리 메서드
-
-- findAll(filters?) / findById(id) / create(data) / update(id, data) / softDelete(id) / toggleActive(id)
+- Root: 1.2.0
+- API: 0.2.0
+- Mobile: 0.1.0
 
 ---
 
-## Phase 2: Members API
+## Phase A: 환경 셋업 (PC에서 보기) — 15분
 
-운영자의 회원 관리 기능.
+> 🔴 블로킹: 이것 없이는 아무것도 실행 불가
 
-### 신규 파일
+### A-1. 환경변수 파일 생성
 
-- `apps/api/src/routes/members.ts`
-- `apps/api/src/services/member-service.ts`
-- `apps/api/src/repositories/member-repository.ts` (user-repository.ts 확장 또는 신규)
+**apps/api/.env**
 
-### 엔드포인트 (7개)
+```env
+DATABASE_URL=postgresql://user:password@host/studiogo?sslmode=require
+JWT_SECRET=최소32자-랜덤문자열
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+KAKAO_REST_API_KEY=카카오-REST-API-키
+KAKAO_CLIENT_SECRET=카카오-Client-Secret
+KAKAO_BIZ_APP_KEY=placeholder
+KAKAO_BIZ_SENDER_KEY=placeholder
+CRON_SECRET=로컬개발용-시크릿
+EXPO_ACCESS_TOKEN=placeholder
+APP_URL=http://localhost:8081
+ASSET_PUBLIC_BASE_URL=placeholder
+ASSET_UPLOAD_BASE_URL=placeholder
+PORT=3001
+```
 
-| Method | Path                   | 설명           | 권한      |
-| ------ | ---------------------- | -------------- | --------- |
-| GET    | /members               | 회원 목록      | OPERATOR+ |
-| GET    | /members/:id           | 회원 상세      | OPERATOR+ |
-| POST   | /members/:id/approve   | 회원 승인      | OPERATOR+ |
-| POST   | /members/:id/suspend   | 회원 정지      | OPERATOR+ |
-| POST   | /members/:id/unsuspend | 정지 해제      | OPERATOR+ |
-| PATCH  | /members/:id           | 회원 정보 수정 | ADMIN     |
-| GET    | /members/:id/history   | 예약/방송 이력 | OPERATOR+ |
+**apps/mobile/.env**
 
-### 기존 활용
+```env
+EXPO_PUBLIC_API_URL=http://localhost:3001
+EXPO_PUBLIC_KAKAO_APP_KEY=카카오-네이티브-앱키
+```
 
-- user-repository.ts에 이미 updateStatus, findById 존재 → 확장
+### A-2. DB 마이그레이션 + 시드
 
----
+```bash
+cd apps/api
+npm run db:migrate    # 28개 테이블 생성
+npm run db:seed       # 초기 데이터 (관리자, 스튜디오, 설정 등)
+```
 
-## Phase 3: Admin API
+### A-3. 실행
 
-관리자 전용 설정/관리 기능. 가장 규모가 큼.
+```bash
+npm run dev:all       # API(3001) + Expo(8081) 동시 실행
+# 브라우저에서 http://localhost:8081 접속
+```
 
-### 신규 파일
+### 사전 준비물
 
-- `apps/api/src/routes/admin.ts`
-- `apps/api/src/services/admin-service.ts`
-- `apps/api/src/repositories/blackout-repository.ts`
-- `apps/api/src/repositories/announcement-repository.ts`
-- `apps/api/src/repositories/feature-flag-repository.ts`
-- `apps/api/src/repositories/service-repository.ts` (부가서비스)
-
-### 엔드포인트 (18개)
-
-#### 운영 설정 (2개)
-
-| Method | Path                 | 설명           |
-| ------ | -------------------- | -------------- |
-| GET    | /admin/settings      | 운영 설정 조회 |
-| PATCH  | /admin/settings/:key | 운영 설정 수정 |
-
-#### Blackout (3개)
-
-| Method | Path                 | 설명          |
-| ------ | -------------------- | ------------- |
-| GET    | /admin/blackouts     | blackout 목록 |
-| POST   | /admin/blackouts     | blackout 생성 |
-| DELETE | /admin/blackouts/:id | blackout 삭제 |
-
-#### 티어 (3개)
-
-| Method | Path                     | 설명           |
-| ------ | ------------------------ | -------------- |
-| GET    | /admin/tiers/config      | 티어 설정 조회 |
-| PATCH  | /admin/tiers/config      | 티어 설정 수정 |
-| POST   | /admin/tiers/recalculate | 전체 재계산    |
-
-#### 부가서비스 (4개)
-
-| Method | Path                | 설명            |
-| ------ | ------------------- | --------------- |
-| GET    | /admin/services     | 부가서비스 목록 |
-| POST   | /admin/services     | 부가서비스 생성 |
-| PATCH  | /admin/services/:id | 부가서비스 수정 |
-| DELETE | /admin/services/:id | 부가서비스 삭제 |
-
-#### 시스템 로그 (1개)
-
-| Method | Path        | 설명        |
-| ------ | ----------- | ----------- |
-| GET    | /admin/logs | 시스템 로그 |
-
-#### Feature Flags (2개)
-
-| Method | Path                      | 설명      |
-| ------ | ------------------------- | --------- |
-| GET    | /admin/feature-flags      | flag 목록 |
-| PATCH  | /admin/feature-flags/:key | flag 수정 |
-
-#### 공지사항 (3개)
-
-| Method | Path                     | 설명      |
-| ------ | ------------------------ | --------- |
-| GET    | /admin/announcements     | 공지 목록 |
-| POST   | /admin/announcements     | 공지 생성 |
-| PATCH  | /admin/announcements/:id | 공지 수정 |
-| DELETE | /admin/announcements/:id | 공지 삭제 |
-
-### 기존 활용
-
-- settings-repository.ts (get/set 이미 존재)
-- system-log-repository.ts (create 이미 존재, 조회 추가 필요)
+- [ ] Neon PostgreSQL 프로젝트 (무료 티어 OK)
+- [ ] 카카오 개발자 앱 (https://developers.kakao.com)
+  - REST API 키, Client Secret, 네이티브 앱 키
 
 ---
 
-## Phase 4: Operator API
+## Phase B: 보안 수정 — 30분
 
-운영자 전용 기능 (대시보드, 체크인, 포장, 통계).
+> 🟡 멤버가 admin API 호출하는 보안 문제
 
-### 신규 파일
+### B-1. 공개 서비스 엔드포인트 추가
 
-- `apps/api/src/routes/operator.ts`
-- `apps/api/src/services/operator-service.ts`
-- `apps/api/src/repositories/checkin-repository.ts`
-- `apps/api/src/repositories/fulfillment-repository.ts`
+**문제**: `ServicesStep.tsx`에서 `GET /admin/services` 호출 → 멤버 권한으로 접근 불가
+**해결**: `GET /services` (MEMBER+ 권한) 엔드포인트 추가
 
-### 엔드포인트 (8개)
-
-| Method | Path                          | 설명            | 권한      |
-| ------ | ----------------------------- | --------------- | --------- |
-| GET    | /operator/dashboard           | 대시보드 데이터 | OPERATOR+ |
-| POST   | /operator/checkin             | 체크인 처리     | OPERATOR+ |
-| POST   | /operator/checkout/:id        | 체크아웃        | OPERATOR+ |
-| GET    | /operator/fulfillment         | 포장 작업 목록  | OPERATOR+ |
-| PATCH  | /operator/fulfillment/:id     | 포장 상태 변경  | OPERATOR+ |
-| GET    | /operator/stats               | 운영 통계       | OPERATOR+ |
-| GET    | /operator/permissions         | 권한 목록       | ADMIN     |
-| PATCH  | /operator/permissions/:userId | 권한 수정       | ADMIN     |
+| 작업              | 파일                                                          |
+| ----------------- | ------------------------------------------------------------- |
+| 라우트 추가       | `apps/api/src/routes/services.ts` (신규)                      |
+| 서비스 메서드     | `service-repository.ts`의 `findActive()` 재사용               |
+| app.ts 등록       | `servicesRoute` 추가                                          |
+| 모바일 훅 수정    | `useAdmin.ts`의 `useAdminServices` → 별도 `usePublicServices` |
+| ServicesStep 수정 | import 변경                                                   |
 
 ---
 
-## Phase 5: Calendar API + Reservations 확장
+## Phase C: 기능 완성 — 3시간
 
-### Calendar — 신규 파일
+### C-1. 체크인 QR 스캐너 (2시간)
 
-- `apps/api/src/routes/calendar.ts`
-- `apps/api/src/services/calendar-service.ts`
+**현재**: 체크인 화면 UI 완성, QR 스캔 기능 미구현
+**필요**:
 
-### Calendar 엔드포인트 (3개)
+1. `expo-camera` 또는 `expo-barcode-scanner` 설치
+2. app.config.ts에 카메라 권한 추가
+3. QR 스캔 컴포넌트 구현
+4. onScan → `POST /operator/checkin` 연동
 
-| Method | Path              | 설명        | 권한    |
-| ------ | ----------------- | ----------- | ------- |
-| GET    | /calendar/monthly | 월간 데이터 | MEMBER+ |
-| GET    | /calendar/weekly  | 주간 데이터 | MEMBER+ |
-| GET    | /calendar/daily   | 일간 데이터 | MEMBER+ |
+| 파일                     | 변경                    |
+| ------------------------ | ----------------------- |
+| `package.json`           | expo-camera 추가        |
+| `app.config.ts`          | permissions: ["CAMERA"] |
+| `(operator)/checkin.tsx` | QR 스캐너 UI + 핸들러   |
 
-### Reservations 추가 엔드포인트 (6개)
+### C-2. asset-service S3/R2 실제 연동 (1시간)
 
-| Method | Path                       | 설명             | 권한      |
-| ------ | -------------------------- | ---------------- | --------- |
-| GET    | /reservations              | 예약 목록 (필터) | MEMBER+   |
-| GET    | /reservations/:id          | 예약 상세        | MEMBER+   |
-| POST   | /reservations/:id/complete | 방송 완료        | OPERATOR+ |
-| POST   | /reservations/:id/no-show  | 노쇼 처리        | OPERATOR+ |
-| GET    | /reservations/my           | 내 예약 목록     | MEMBER    |
-| GET    | /reservations/my/stats     | 내 통계          | MEMBER    |
+**현재**: placeholder URL 반환
+**필요**: 스토리지 선택 후 SDK 연동
 
-### 기존 확장
+| 스토리지      | 비용      | 장점                 |
+| ------------- | --------- | -------------------- |
+| Cloudflare R2 | 10GB 무료 | egress 무료, S3 호환 |
+| Vercel Blob   | 작은 무료 | Vercel 네이티브 통합 |
+| AWS S3        | 종량제    | 표준, 풍부한 기능    |
 
-- reservation-service.ts에 complete(), noShow(), list(), getById(), getMyReservations(), getMyStats() 추가
-- reservation-repository.ts에 findAll(filters), countStats(userId) 추가
+**추천: Cloudflare R2** (비용 효율 최고)
 
----
-
-## Phase 6: Auth + Notifications 확장
-
-### Auth 추가 (2개)
-
-| Method | Path               | 설명      |
-| ------ | ------------------ | --------- |
-| POST   | /auth/refresh      | 토큰 갱신 |
-| DELETE | /auth/sessions/:id | 세션 해제 |
-
-### Notifications 추가 (4개)
-
-| Method | Path                               | 설명           | 권한      |
-| ------ | ---------------------------------- | -------------- | --------- |
-| GET    | /notifications/settings            | 알림 설정 조회 | ADMIN     |
-| PATCH  | /notifications/settings/:eventType | 알림 설정 수정 | ADMIN     |
-| POST   | /notifications/test                | 테스트 발송    | ADMIN     |
-| GET    | /notifications/logs                | 발송 이력      | OPERATOR+ |
-
-### 기존 확장
-
-- auth-service.ts에 refreshToken(), revokeSession() 추가
-- notification-service.ts에 getSettings(), updateSettings(), sendTest(), getLogs() 추가
+| 파일                                     | 변경                                     |
+| ---------------------------------------- | ---------------------------------------- |
+| `apps/api/src/services/asset-service.ts` | presigned URL 생성 로직                  |
+| `.env`                                   | R2 인증 정보 추가                        |
+| `package.json`                           | `@aws-sdk/client-s3` 추가 (R2는 S3 호환) |
 
 ---
 
-## Phase 7: Waitlist + Assets + Cron 완성
+## Phase D: 품질 강화 — 5시간+
 
-### Waitlist — 신규 파일
+### D-1. 테스트 커버리지 확대 (4시간+)
 
-- `apps/api/src/routes/waitlist.ts`
-- `apps/api/src/services/waitlist-service.ts`
-- `apps/api/src/repositories/waitlist-repository.ts`
+**현재**: 31개 테스트 (domain 25 + api 6) → 7.3% 엔드포인트 커버리지
+**목표**: 핵심 경로 50%+ 커버리지
 
-### Waitlist 엔드포인트 (3개)
+| 우선순위 | 대상                              | 테스트 수 (예상) |
+| -------- | --------------------------------- | ---------------- |
+| 1        | auth (로그인/토큰/세션)           | ~10              |
+| 2        | reservations (예약 CRUD/상태전이) | ~15              |
+| 3        | slots (Hold/만료/가용성)          | ~8               |
+| 4        | operator (체크인/포장)            | ~8               |
+| 5        | admin (설정/CRUD)                 | ~10              |
+| 6        | studios, members, calendar        | ~10              |
 
-| Method | Path          | 설명         | 권한             |
-| ------ | ------------- | ------------ | ---------------- |
-| POST   | /waitlist     | 대기 등록    | MEMBER(APPROVED) |
-| DELETE | /waitlist/:id | 대기 취소    | MEMBER           |
-| GET    | /waitlist/my  | 내 대기 목록 | MEMBER           |
+### D-2. 캘린더 슬롯 렌더링 검증 (30분)
 
-### Assets — 신규 파일
+MonthlyView/WeeklyView/DailyView에서 실제 슬롯 데이터 표시 확인
+→ 실행 후 시각적 검증 필요
 
-- `apps/api/src/routes/assets.ts`
-- `apps/api/src/services/asset-service.ts`
+### D-3. 에러 바운더리 추가 (30분)
 
-### Assets 엔드포인트 (2개)
-
-| Method | Path               | 설명            | 권한          |
-| ------ | ------------------ | --------------- | ------------- |
-| POST   | /assets/upload-url | 업로드 URL 발급 | authenticated |
-| POST   | /assets/confirm    | 업로드 확인     | authenticated |
-
-### Cron 스켈레톤 구현 (3개)
-
-- `processReminders()` — 방송 1시간 전 리마인더
-- `processDailySummary()` — 운영자 일일 요약
-- `processWeeklyReport()` — 관리자 주간 리포트
+전역 ErrorBoundary + fallback UI
 
 ---
 
-## Phase 8: 모바일 미완성 보완
+## 실행 순서 요약
 
-### 스켈레톤 → 실구현
+```
+Phase A (15분) → 화면에서 볼 수 있음
+  ↓
+Phase B (30분) → 보안 문제 해결
+  ↓
+Phase C (3시간) → 기능 100% 완성
+  ↓
+Phase D (5시간+) → 품질/안정성
+```
 
-1. `(admin)/permissions.tsx` — 운영자 권한 관리 화면
-2. `(admin)/notification-settings.tsx` — 알림 설정 화면
+**총 남은 작업: 약 9시간**
 
-### Mock → API 연동
-
-3. `StudioSelectStep.tsx` — Mock 스튜디오 → GET /studios 연동
-4. `ServicesStep.tsx` — Mock 서비스 → GET /admin/services 연동
-
----
-
-## 구현 원칙
-
-1. **기존 패턴 준수**: 라우트→서비스→리포지토리 3계층
-2. **Zod 검증**: 모든 API 경계에서 contracts/ 스키마 사용
-3. **상태 머신**: shared/domain/ 상태 전이 함수 활용
-4. **에러 처리**: ApiError 팩토리 + 에러 코드 (contracts/errors)
-5. **미들웨어**: requireAuth/requireOperator/requireAdmin 적용
-6. **응답 형식**: success/created/paginated 헬퍼 사용
-
-## 총 규모
-
-| 구분                     | 수량     |
-| ------------------------ | -------- |
-| 신규 라우트 파일         | 7개      |
-| 기존 라우트 확장         | 3개      |
-| 신규 서비스 파일         | 7개      |
-| 기존 서비스 확장         | 3개      |
-| 신규 리포지토리          | 6개      |
-| 기존 리포지토리 확장     | 3개      |
-| 모바일 화면 구현/보완    | 4개      |
-| **총 미구현 엔드포인트** | **62개** |
+- MVP 실행 가능: Phase A만 (15분)
+- 프로덕션 배포 가능: Phase A+B+C (4시간)
+- 완전 완성: Phase A+B+C+D (9시간)
