@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
 import { errorHandler } from './middleware/error-handler';
+import { requestLogger } from './middleware/request-logger';
 import { rateLimiter, authRateLimiter } from './middleware/rate-limiter';
 import { securityHeaders } from './middleware/security-headers';
 import authRoutes from './routes/auth';
@@ -31,7 +31,7 @@ const app = new Hono().basePath('/api');
 
 // 글로벌 에러 핸들러 + 미들웨어
 app.onError(errorHandler);
-app.use('*', logger());
+app.use('*', requestLogger);
 app.use(
   '*',
   cors({
