@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { errorHandler } from './middleware/error-handler';
+import { rateLimiter, authRateLimiter } from './middleware/rate-limiter';
 import authRoutes from './routes/auth';
 import reservationsRoutes from './routes/reservations';
 import slotsRoutes from './routes/slots';
@@ -29,6 +30,8 @@ app.use(
     credentials: true,
   }),
 );
+app.use('*', rateLimiter());
+app.use('/auth/*', authRateLimiter);
 
 // 헬스체크
 app.get('/', (c) => {
