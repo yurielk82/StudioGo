@@ -1,6 +1,6 @@
 {
   "name": "studiogo",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -39,5 +39,8 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "query-string": "^7.1.3"
   }
 }

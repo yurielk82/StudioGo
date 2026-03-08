@@ -13,6 +13,15 @@
       "@constants": ["../../shared/constants"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "../../shared/domain/**/*", "../../shared/contracts/**/*", "../../shared/constants/**/*"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../../shared/domain/**/*",
+    "../../shared/contracts/**/*",
+    "../../shared/constants/**/*",
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

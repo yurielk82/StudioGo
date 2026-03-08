@@ -1,6 +1,11 @@
+import { config } from 'dotenv';
+import { resolve } from 'path';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from '../schema';
+
+// apps/api/.env 로드 (npm run db:seed 시 cwd가 apps/api)
+config({ path: resolve(process.cwd(), '.env') });
 import { seedOperationSettings } from './operation-settings';
 import { seedNotificationSettings } from './notification-settings';
 import { seedAdminUser } from './admin-user';

@@ -15,11 +15,11 @@ export function useMe() {
   return useQuery({
     queryKey: QUERY_KEYS.auth.me,
     queryFn: async () => {
-      const token = await tokenStorage.getAccessToken();
-      if (!token) {
-        return null;
-      }
       try {
+        const token = await tokenStorage.getAccessToken();
+        if (!token) {
+          return null;
+        }
         const profile = await apiClient<UserProfile>(API_ROUTES.AUTH.ME);
         setUser({
           id: profile.id,
