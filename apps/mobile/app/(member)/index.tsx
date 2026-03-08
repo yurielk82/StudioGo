@@ -1,21 +1,9 @@
-import { View, Pressable, FlatList } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Calendar, Clock, ChevronRight, Plus, List } from 'lucide-react-native';
-import { Screen, StyledText, GlassCard, Button, Badge, COLORS } from '@/design-system';
+import { Calendar, Clock, Plus, List } from 'lucide-react-native';
+import { Screen, StyledText, GlassCard, COLORS } from '@/design-system';
 import { useAuthStore } from '@/stores/auth-store';
 import { useMyReservations } from '@/hooks/useReservation';
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: '승인 대기',
-  APPROVED: '승인됨',
-  COMPLETED: '완료',
-};
-
-const STATUS_VARIANT: Record<string, 'warning' | 'success' | 'primary'> = {
-  PENDING: 'warning',
-  APPROVED: 'success',
-  COMPLETED: 'primary',
-};
 
 /**
  * 회원 홈 — 인사, 다음 예약, 빠른 액션, 최근 예약
@@ -33,26 +21,22 @@ export default function MemberHomeScreen() {
       <StyledText variant="heading-lg" className="mb-1">
         안녕하세요, {user?.nickname ?? '회원'}님!
       </StyledText>
-      <StyledText variant="body-sm" className="text-neutral-500 mb-5">
+      <StyledText variant="body-sm" className="mb-5 text-neutral-500">
         오늘도 멋진 방송을 준비하세요.
       </StyledText>
 
       {/* 다음 예약 카드 */}
-      <GlassCard className="p-5 mb-4">
-        <StyledText variant="label-md" className="text-neutral-500 mb-2">
+      <GlassCard className="mb-4 p-5">
+        <StyledText variant="label-md" className="mb-2 text-neutral-500">
           다음 예약
         </StyledText>
 
         {nextReservation ? (
-          <Pressable
-            onPress={() =>
-              router.push(`/(member)/reservation/${nextReservation.id}`)
-            }
-          >
+          <Pressable onPress={() => router.push(`/(member)/reservation/${nextReservation.id}`)}>
             <StyledText variant="heading-md" className="mb-2">
               {nextReservation.studioName}
             </StyledText>
-            <View className="flex-row items-center mb-1">
+            <View className="mb-1 flex-row items-center">
               <Calendar size={14} color={COLORS.primary.DEFAULT} />
               <StyledText variant="body-md" className="ml-2">
                 {nextReservation.date}
@@ -73,25 +57,19 @@ export default function MemberHomeScreen() {
       </GlassCard>
 
       {/* 빠른 액션 */}
-      <View className="flex-row gap-3 mb-6">
-        <Pressable
-          onPress={() => router.push('/(member)/reservation/new')}
-          className="flex-1"
-        >
-          <GlassCard className="p-4 items-center">
-            <View className="w-10 h-10 rounded-full bg-primary items-center justify-center mb-2">
+      <View className="mb-6 flex-row gap-3">
+        <Pressable onPress={() => router.push('/(member)/reservation/new')} className="flex-1">
+          <GlassCard className="items-center p-4">
+            <View className="mb-2 h-10 w-10 items-center justify-center rounded-full bg-primary">
               <Plus size={20} color="#FFFFFF" />
             </View>
             <StyledText variant="label-md">새 예약</StyledText>
           </GlassCard>
         </Pressable>
 
-        <Pressable
-          onPress={() => router.push('/(member)/reservation/list')}
-          className="flex-1"
-        >
-          <GlassCard className="p-4 items-center">
-            <View className="w-10 h-10 rounded-full bg-secondary items-center justify-center mb-2">
+        <Pressable onPress={() => router.push('/(member)/reservation/list')} className="flex-1">
+          <GlassCard className="items-center p-4">
+            <View className="mb-2 h-10 w-10 items-center justify-center rounded-full bg-secondary">
               <List size={20} color="#FFFFFF" />
             </View>
             <StyledText variant="label-md">예약 내역</StyledText>

@@ -1,6 +1,6 @@
 import { View, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
-import { Calendar, Clock, Check, X } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Badge, Button, Input, COLORS } from '@/design-system';
 import { useMyReservations } from '@/hooks/useReservation';
 import { useApproveReservation, useRejectReservation, useBatchApprove } from '@/hooks/useOperator';
@@ -71,12 +71,12 @@ export default function OperatorReservationsScreen() {
       </StyledText>
 
       {/* 필터 */}
-      <View className="flex-row mb-4">
+      <View className="mb-4 flex-row">
         {filters.map((f, i) => (
           <Pressable
             key={filterLabels[i]}
             onPress={() => setFilter(f)}
-            className={`mr-2 px-3 py-1.5 rounded-chip ${filter === f ? 'bg-primary' : 'bg-neutral-100'}`}
+            className={`mr-2 rounded-chip px-3 py-1.5 ${filter === f ? 'bg-primary' : 'bg-neutral-100'}`}
           >
             <StyledText
               variant="label-md"
@@ -102,8 +102,10 @@ export default function OperatorReservationsScreen() {
 
       {/* 거절 사유 모달 */}
       {rejectingId && (
-        <GlassCard className="p-4 mb-4">
-          <StyledText variant="heading-sm" className="mb-2">거절 사유 입력</StyledText>
+        <GlassCard className="mb-4 p-4">
+          <StyledText variant="heading-sm" className="mb-2">
+            거절 사유 입력
+          </StyledText>
           <Input
             placeholder="거절 사유를 입력하세요"
             value={rejectReason}
@@ -134,22 +136,22 @@ export default function OperatorReservationsScreen() {
           data={data?.items ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
+            <GlassCard className="mb-2 p-4">
               <Pressable
                 onPress={() => filter === 'PENDING' && toggleSelect(item.id)}
                 className="flex-row items-start"
               >
                 {filter === 'PENDING' && (
                   <View
-                    className={`w-5 h-5 rounded mr-3 mt-0.5 border-2 items-center justify-center ${
-                      selectedIds.has(item.id) ? 'bg-primary border-primary' : 'border-neutral-300'
+                    className={`mr-3 mt-0.5 h-5 w-5 items-center justify-center rounded border-2 ${
+                      selectedIds.has(item.id) ? 'border-primary bg-primary' : 'border-neutral-300'
                     }`}
                   >
                     {selectedIds.has(item.id) && <Check size={12} color="#FFF" />}
                   </View>
                 )}
                 <View className="flex-1">
-                  <View className="flex-row justify-between mb-1">
+                  <View className="mb-1 flex-row justify-between">
                     <StyledText variant="body-lg" className="font-medium">
                       {item.userName ?? item.userNickname}
                     </StyledText>
@@ -164,11 +166,16 @@ export default function OperatorReservationsScreen() {
               </Pressable>
 
               {filter === 'PENDING' && !selectedIds.has(item.id) && (
-                <View className="flex-row gap-2 mt-3">
+                <View className="mt-3 flex-row gap-2">
                   <Button size="sm" onPress={() => approve.mutate(item.id)} className="flex-1">
                     승인
                   </Button>
-                  <Button size="sm" variant="outline" onPress={() => setRejectingId(item.id)} className="flex-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => setRejectingId(item.id)}
+                    className="flex-1"
+                  >
                     거절
                   </Button>
                 </View>
@@ -176,7 +183,7 @@ export default function OperatorReservationsScreen() {
             </GlassCard>
           )}
           ListEmptyComponent={
-            <StyledText variant="body-md" className="text-neutral-400 text-center py-8">
+            <StyledText variant="body-md" className="py-8 text-center text-neutral-400">
               해당 상태의 예약이 없습니다.
             </StyledText>
           }

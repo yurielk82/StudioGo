@@ -1,6 +1,6 @@
 import { View, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
-import { Package, Truck } from 'lucide-react-native';
+import { Truck } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Badge, Button, Input, COLORS } from '@/design-system';
 import { useFulfillmentTasks, useUpdateFulfillment } from '@/hooks/useOperator';
 
@@ -14,13 +14,14 @@ const STATUS_LABEL: Record<string, string> = {
   COMPLETED: '완료',
 };
 
-const STATUS_VARIANT: Record<string, 'warning' | 'primary' | 'success' | 'secondary' | 'neutral'> = {
-  PENDING: 'warning',
-  PACKING: 'primary',
-  READY: 'secondary',
-  SHIPPED: 'success',
-  COMPLETED: 'neutral',
-};
+const STATUS_VARIANT: Record<string, 'warning' | 'primary' | 'success' | 'secondary' | 'neutral'> =
+  {
+    PENDING: 'warning',
+    PACKING: 'primary',
+    READY: 'secondary',
+    SHIPPED: 'success',
+    COMPLETED: 'neutral',
+  };
 
 export default function FulfillmentScreen() {
   const [filter, setFilter] = useState<string | undefined>('PENDING');
@@ -33,7 +34,7 @@ export default function FulfillmentScreen() {
   } | null>(null);
 
   function getNextStatus(current: string): string | null {
-    const idx = STATUS_FLOW.indexOf(current as typeof STATUS_FLOW[number]);
+    const idx = STATUS_FLOW.indexOf(current as (typeof STATUS_FLOW)[number]);
     if (idx < 0 || idx >= STATUS_FLOW.length - 1) return null;
     return STATUS_FLOW[idx + 1]!;
   }
@@ -69,12 +70,12 @@ export default function FulfillmentScreen() {
         포장/출고 관리
       </StyledText>
 
-      <View className="flex-row mb-4 flex-wrap gap-1">
+      <View className="mb-4 flex-row flex-wrap gap-1">
         {[undefined, ...STATUS_FLOW.slice(0, 4)].map((s, i) => (
           <Pressable
             key={i}
             onPress={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-chip ${filter === s ? 'bg-primary' : 'bg-neutral-100'}`}
+            className={`rounded-chip px-3 py-1.5 ${filter === s ? 'bg-primary' : 'bg-neutral-100'}`}
           >
             <StyledText
               variant="label-md"
@@ -88,8 +89,10 @@ export default function FulfillmentScreen() {
 
       {/* 발송 정보 입력 */}
       {shippingInfo && (
-        <GlassCard className="p-4 mb-4">
-          <StyledText variant="heading-sm" className="mb-3">발송 정보</StyledText>
+        <GlassCard className="mb-4 p-4">
+          <StyledText variant="heading-sm" className="mb-3">
+            발송 정보
+          </StyledText>
           <Input
             label="택배사"
             placeholder="CJ대한통운"
@@ -125,8 +128,8 @@ export default function FulfillmentScreen() {
             const next = getNextStatus(item.status);
 
             return (
-              <GlassCard className="p-4 mb-2">
-                <View className="flex-row justify-between items-start mb-2">
+              <GlassCard className="mb-2 p-4">
+                <View className="mb-2 flex-row items-start justify-between">
                   <View>
                     <StyledText variant="body-lg" className="font-medium">
                       {item.userName}
@@ -141,9 +144,9 @@ export default function FulfillmentScreen() {
                 </View>
 
                 {item.courier && (
-                  <View className="flex-row items-center mt-1">
+                  <View className="mt-1 flex-row items-center">
                     <Truck size={14} color={COLORS.neutral[500]} />
-                    <StyledText variant="body-sm" className="text-neutral-500 ml-1">
+                    <StyledText variant="body-sm" className="ml-1 text-neutral-500">
                       {item.courier} {item.trackingNumber}
                     </StyledText>
                   </View>
@@ -164,7 +167,7 @@ export default function FulfillmentScreen() {
             );
           }}
           ListEmptyComponent={
-            <StyledText variant="body-md" className="text-neutral-400 text-center py-8">
+            <StyledText variant="body-md" className="py-8 text-center text-neutral-400">
               작업이 없습니다.
             </StyledText>
           }

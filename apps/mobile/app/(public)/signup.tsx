@@ -1,4 +1,4 @@
-import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Screen, StyledText, Button, Input, GlassCard } from '@/design-system';
@@ -47,11 +47,11 @@ export default function SignupScreen() {
           <StyledText variant="display-sm" className="mb-2 mt-4">
             회원가입
           </StyledText>
-          <StyledText variant="body-md" className="text-neutral-500 mb-6">
+          <StyledText variant="body-md" className="mb-6 text-neutral-500">
             서비스 이용을 위한 추가 정보를 입력해주세요.
           </StyledText>
 
-          <GlassCard className="p-5 mb-4">
+          <GlassCard className="mb-4 p-5">
             <StyledText variant="heading-sm" className="mb-4">
               기본 정보
             </StyledText>
@@ -107,11 +107,11 @@ export default function SignupScreen() {
             />
           </GlassCard>
 
-          <GlassCard className="p-5 mb-6">
+          <GlassCard className="mb-6 p-5">
             <StyledText variant="heading-sm" className="mb-1">
               정산 계좌 (선택)
             </StyledText>
-            <StyledText variant="caption" className="text-neutral-500 mb-4">
+            <StyledText variant="caption" className="mb-4 text-neutral-500">
               나중에 설정할 수 있습니다.
             </StyledText>
 
@@ -161,17 +161,12 @@ export default function SignupScreen() {
             />
           </GlassCard>
 
-          <Button
-            onPress={handleSubmit(onSubmit)}
-            loading={signup.isPending}
-            fullWidth
-            size="lg"
-          >
+          <Button onPress={handleSubmit(onSubmit)} loading={signup.isPending} fullWidth size="lg">
             가입 완료
           </Button>
 
           {signup.error && (
-            <StyledText variant="body-sm" className="text-error text-center mt-3">
+            <StyledText variant="body-sm" className="mt-3 text-center text-error">
               {signup.error instanceof Error ? signup.error.message : '가입에 실패했습니다.'}
             </StyledText>
           )}
