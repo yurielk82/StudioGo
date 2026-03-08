@@ -51,6 +51,10 @@ export const COLORS = {
     border: 'rgba(255,255,255,0.1)',
   },
 
+  // 기본
+  white: '#FFFFFF',
+  black: '#000000',
+
   // 중립
   neutral: {
     50: '#FAFAFA',

@@ -147,7 +147,7 @@ export default function OperatorReservationsScreen() {
                       selectedIds.has(item.id) ? 'border-primary bg-primary' : 'border-neutral-300'
                     }`}
                   >
-                    {selectedIds.has(item.id) && <Check size={12} color="#FFF" />}
+                    {selectedIds.has(item.id) && <Check size={12} color={COLORS.white} />}
                   </View>
                 )}
                 <View className="flex-1">

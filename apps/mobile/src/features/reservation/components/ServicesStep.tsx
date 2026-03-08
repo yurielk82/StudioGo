@@ -79,7 +79,7 @@ export function ServicesStep() {
                         isSelected ? 'bg-primary' : 'border-2 border-neutral-300'
                       }`}
                     >
-                      {isSelected && <Check size={14} color="#FFFFFF" />}
+                      {isSelected && <Check size={14} color={COLORS.white} />}
                     </View>
                   </View>
 

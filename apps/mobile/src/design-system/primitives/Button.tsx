@@ -1,6 +1,7 @@
 import { Pressable, ActivityIndicator, View } from 'react-native';
 import { forwardRef } from 'react';
 import { StyledText } from './Text';
+import { COLORS } from '../tokens/colors';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -71,27 +72,20 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       ref={ref}
       onPress={onPress}
       disabled={isDisabled}
-      className={`
-        flex-row items-center justify-center rounded-button
-        ${variantStyle.container}
-        ${sizeStyle.container}
-        ${isDisabled ? 'opacity-50' : ''}
-        ${fullWidth ? 'w-full' : ''}
-        ${className}
-      `}
+      className={`flex-row items-center justify-center rounded-button ${variantStyle.container} ${sizeStyle.container} ${isDisabled ? 'opacity-50' : ''} ${fullWidth ? 'w-full' : ''} ${className} `}
     >
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'outline' || variant === 'ghost' ? '#6C5CE7' : '#FFFFFF'}
+          color={
+            variant === 'outline' || variant === 'ghost' ? COLORS.primary.DEFAULT : COLORS.white
+          }
         />
       ) : (
         <>
           {icon && <View className="mr-2">{icon}</View>}
           {typeof children === 'string' ? (
-            <StyledText className={`${variantStyle.text} ${sizeStyle.text}`}>
-              {children}
-            </StyledText>
+            <StyledText className={`${variantStyle.text} ${sizeStyle.text}`}>{children}</StyledText>
           ) : (
             children
           )}
