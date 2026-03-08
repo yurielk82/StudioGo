@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { errorHandler } from './middleware/error-handler';
 import { rateLimiter, authRateLimiter } from './middleware/rate-limiter';
+import { securityHeaders } from './middleware/security-headers';
 import authRoutes from './routes/auth';
 import reservationsRoutes from './routes/reservations';
 import slotsRoutes from './routes/slots';
@@ -16,7 +17,9 @@ import calendarRoutes from './routes/calendar';
 import waitlistRoutes from './routes/waitlist';
 import assetsRoutes from './routes/assets';
 import servicesRoutes from './routes/services';
+import { sql } from 'drizzle-orm';
 import { APP_NAME, API_VERSION } from '../../../shared/constants';
+import { db } from '../../../shared/db/index';
 import { env } from './lib/env';
 
 const CORS_ORIGINS =
@@ -36,6 +39,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use('*', securityHeaders);
 app.use('*', rateLimiter());
 app.use('/auth/*', authRateLimiter);
 
@@ -49,6 +53,40 @@ app.get('/', (c) => {
       status: 'healthy',
     },
   });
+});
+
+// 상세 헬스체크 (모니터링 도구용)
+app.get('/health', async (c) => {
+  let dbStatus = 'healthy';
+  let dbLatencyMs = 0;
+
+  try {
+    const dbStart = Date.now();
+    await db.execute(sql`SELECT 1`);
+    dbLatencyMs = Date.now() - dbStart;
+  } catch {
+    dbStatus = 'unhealthy';
+  }
+
+  const status = dbStatus === 'healthy' ? 'healthy' : 'degraded';
+  const statusCode = status === 'healthy' ? 200 : 503;
+
+  return c.json(
+    {
+      success: status === 'healthy',
+      data: {
+        service: `${APP_NAME} API`,
+        version: API_VERSION,
+        status,
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        checks: {
+          database: { status: dbStatus, latencyMs: dbLatencyMs },
+        },
+      },
+    },
+    statusCode,
+  );
 });
 
 // 라우트 등록
