@@ -65,6 +65,13 @@ export const COLORS = {
     900: '#212121',
   },
 
+  // 외부 브랜드
+  kakao: {
+    DEFAULT: '#FEE500',
+    active: '#E5CF00',
+    text: '#391B1B',
+  },
+
   // 그라디언트 프리셋
   gradient: {
     primary: ['#6C5CE7', '#A29BFE'] as const,

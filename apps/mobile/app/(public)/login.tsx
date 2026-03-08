@@ -61,10 +61,10 @@ export default function LoginScreen() {
               loading={isLoading}
               fullWidth
               size="lg"
-              className="bg-[#FEE500] active:bg-[#E5CF00]"
-              icon={<LogIn size={20} color="#391B1B" />}
+              className="bg-kakao active:bg-kakao-active"
+              icon={<LogIn size={20} color={COLORS.kakao.text} />}
             >
-              <StyledText className="text-body-lg font-semibold text-[#391B1B]">
+              <StyledText className="text-body-lg font-semibold text-kakao-text">
                 카카오로 시작하기
               </StyledText>
             </Button>
