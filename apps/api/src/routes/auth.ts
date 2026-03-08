@@ -91,7 +91,7 @@ const DEV_ROLE_KAKAO_ID: Record<string, string> = {
 };
 
 auth.get('/dev-login/:role', async (c) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || !process.env.ALLOW_DEV_LOGIN) {
     return c.notFound();
   }
 

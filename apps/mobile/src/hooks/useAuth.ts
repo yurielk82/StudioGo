@@ -122,7 +122,7 @@ export function useDevLogin() {
   const { setUser } = useAuthStore();
 
   return useMutation({
-    mutationFn: async (role: string) => {
+    mutationFn: async (role: 'member' | 'operator' | 'admin' | 'pending') => {
       const data = await apiClient<LoginResponse>(API_ROUTES.AUTH.devLogin(role));
       return data;
     },

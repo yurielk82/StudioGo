@@ -43,8 +43,12 @@ async function main() {
   await seedFeatureFlags(db);
   console.warn('  Feature Flags 완료');
 
-  await seedDevUsers(db);
-  console.warn('  개발용 테스트 유저 완료');
+  if (process.env.NODE_ENV === 'production') {
+    console.warn('  개발용 유저 스킵 (production)');
+  } else {
+    await seedDevUsers(db);
+    console.warn('  개발용 테스트 유저 완료');
+  }
 
   console.warn('시드 완료!');
   await client.end();
