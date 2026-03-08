@@ -15,6 +15,7 @@ import calendarRoutes from './routes/calendar';
 import waitlistRoutes from './routes/waitlist';
 import assetsRoutes from './routes/assets';
 import servicesRoutes from './routes/services';
+import { APP_NAME, API_VERSION } from '../../../shared/constants';
 
 const app = new Hono().basePath('/api');
 
@@ -34,8 +35,8 @@ app.get('/', (c) => {
   return c.json({
     success: true,
     data: {
-      service: 'StudioGo API',
-      version: '0.9.1',
+      service: `${APP_NAME} API`,
+      version: API_VERSION,
       status: 'healthy',
     },
   });
