@@ -67,6 +67,9 @@ export const API_ROUTES = {
     settingByEventType: (eventType: string) => `${API_BASE}/notifications/settings/${eventType}`,
   },
 
+  // 부가서비스 (공개, MEMBER+ 권한)
+  SERVICES: `${API_BASE}/services`,
+
   // 운영자
   OPERATOR: {
     DASHBOARD: `${API_BASE}/operator/dashboard`,
@@ -104,6 +107,9 @@ export const QUERY_KEYS = {
     all: ['notifications'] as const,
     unreadCount: ['notifications', 'unread-count'] as const,
     settings: ['notifications', 'settings'] as const,
+  },
+  services: {
+    all: ['services'] as const,
   },
   calendar: {
     monthly: (year: number, month: number) => ['calendar', 'monthly', year, month] as const,

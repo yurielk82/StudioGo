@@ -2,12 +2,12 @@ import { View, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import { Check, Plus, Minus } from 'lucide-react-native';
 import { StyledText, Button, GlassCard, Input, COLORS } from '@/design-system';
 import { useReservationWizardStore } from '@/stores/reservation-wizard-store';
-import { useAdminServices } from '@/hooks/useAdmin';
+import { useServices } from '@/hooks/useServices';
 
 export function ServicesStep() {
   const { services, addService, removeService, updateServiceQuantity, nextStep, prevStep } =
     useReservationWizardStore();
-  const { data: serviceList, isLoading } = useAdminServices();
+  const { data: serviceList, isLoading } = useServices();
 
   const activeServices = (serviceList ?? []).filter((s) => s.isActive);
 

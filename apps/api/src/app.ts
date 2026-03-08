@@ -14,6 +14,7 @@ import operatorRoutes from './routes/operator';
 import calendarRoutes from './routes/calendar';
 import waitlistRoutes from './routes/waitlist';
 import assetsRoutes from './routes/assets';
+import servicesRoutes from './routes/services';
 
 const app = new Hono().basePath('/api');
 
@@ -53,5 +54,6 @@ app.route('/operator', operatorRoutes);
 app.route('/calendar', calendarRoutes);
 app.route('/waitlist', waitlistRoutes);
 app.route('/assets', assetsRoutes);
+app.route('/services', servicesRoutes);
 
 export default app;
