@@ -13,6 +13,7 @@ export const API_ROUTES = {
     ME: `${API_BASE}/auth/me`,
     LOGOUT: `${API_BASE}/auth/logout`,
     SESSIONS: `${API_BASE}/auth/sessions`,
+    devLogin: (role: string) => `${API_BASE}/auth/dev-login/${role}`,
   },
 
   // 예약

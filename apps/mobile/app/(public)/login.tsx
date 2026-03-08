@@ -1,8 +1,8 @@
 import { View, Platform, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { LogIn } from 'lucide-react-native';
+import { LogIn, UserCheck, ShieldCheck, Settings, Clock } from 'lucide-react-native';
 import { Screen, StyledText, Button, GlassCard, COLORS } from '@/design-system';
-import { useKakaoNativeLogin, useKakaoWebLogin } from '@/hooks/useAuth';
+import { useKakaoNativeLogin, useKakaoWebLogin, useDevLogin } from '@/hooks/useAuth';
 
 const KAKAO_AUTH_URL = 'https://kauth.kakao.com/oauth/authorize';
 const WEB_REDIRECT_URI = `${process.env.EXPO_PUBLIC_APP_URL ?? 'http://localhost:8081'}/auth/kakao/callback`;
@@ -12,12 +12,26 @@ const WEB_REDIRECT_URI = `${process.env.EXPO_PUBLIC_APP_URL ?? 'http://localhost
  * - 네이티브: @react-native-kakao/user SDK 사용
  * - 웹: OAuth redirect 방식
  */
+const DEV_LOGIN_BUTTONS = [
+  { role: 'member', label: '멤버 로그인', icon: UserCheck },
+  { role: 'operator', label: '운영자 로그인', icon: Settings },
+  { role: 'admin', label: '관리자 로그인', icon: ShieldCheck },
+  { role: 'pending', label: '대기회원 로그인', icon: Clock },
+] as const;
+
+function isLocalhost(): boolean {
+  if (Platform.OS !== 'web') return false;
+  const hostname = typeof window !== 'undefined' ? window.location?.hostname : '';
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
+
 export default function LoginScreen() {
   const nativeLogin = useKakaoNativeLogin();
   const webLogin = useKakaoWebLogin();
+  const devLogin = useDevLogin();
 
-  const isLoading = nativeLogin.isPending || webLogin.isPending;
-  const error = nativeLogin.error ?? webLogin.error;
+  const isLoading = nativeLogin.isPending || webLogin.isPending || devLogin.isPending;
+  const error = nativeLogin.error ?? webLogin.error ?? devLogin.error;
 
   async function handleKakaoLogin() {
     if (Platform.OS === 'web') {
@@ -68,6 +82,30 @@ export default function LoginScreen() {
                 카카오로 시작하기
               </StyledText>
             </Button>
+
+            {isLocalhost() && (
+              <View className="mt-4 gap-2">
+                <StyledText variant="caption" className="text-center text-white/40">
+                  개발용 로그인
+                </StyledText>
+                {DEV_LOGIN_BUTTONS.map(({ role, label, icon: Icon }) => (
+                  <Button
+                    key={role}
+                    onPress={() => devLogin.mutate(role)}
+                    loading={devLogin.isPending && devLogin.variables === role}
+                    disabled={isLoading}
+                    fullWidth
+                    size="sm"
+                    variant="outline"
+                    icon={<Icon size={16} color="rgba(255,255,255,0.6)" />}
+                  >
+                    <StyledText variant="body-sm" className="text-white/60">
+                      {label}
+                    </StyledText>
+                  </Button>
+                ))}
+              </View>
+            )}
 
             {error && (
               <StyledText variant="body-sm" className="mt-3 text-center text-error">

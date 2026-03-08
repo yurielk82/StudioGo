@@ -115,6 +115,35 @@ export function useKakaoWebLogin() {
 }
 
 /**
+ * 개발용 역할별 로그인 — 시드된 테스트 유저로 JWT 발급
+ */
+export function useDevLogin() {
+  const queryClient = useQueryClient();
+  const { setUser } = useAuthStore();
+
+  return useMutation({
+    mutationFn: async (role: string) => {
+      const data = await apiClient<LoginResponse>(API_ROUTES.AUTH.devLogin(role));
+      return data;
+    },
+    onSuccess: async (data) => {
+      await tokenStorage.setAccessToken(data.tokens.accessToken);
+      await tokenStorage.setRefreshToken(data.tokens.refreshToken);
+      setUser({
+        id: data.user.id,
+        kakaoId: data.user.kakaoId,
+        nickname: data.user.nickname,
+        profileImageUrl: data.user.profileImage,
+        role: data.user.role,
+        status: data.user.status,
+        tier: data.user.tier,
+      });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.auth.me });
+    },
+  });
+}
+
+/**
  * 회원가입 추가정보 입력
  */
 export function useSignup() {

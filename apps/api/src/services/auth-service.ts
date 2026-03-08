@@ -160,6 +160,66 @@ export const authService = {
     return sessionRepository.findByUserId(userId);
   },
 
+  /** 개발용 로그인 — kakaoId로 시드 유저 직접 조회 후 JWT 발급 */
+  async devLogin(
+    kakaoId: string,
+    meta: { platform?: string; ipAddress?: string; userAgent?: string },
+  ): Promise<LoginResponse & { sessionId: string }> {
+    const user = await userRepository.findByKakaoId(kakaoId);
+    if (!user) {
+      throw ApiError.notFound('MEMBER_NOT_FOUND', '개발용 테스트 유저를 찾을 수 없습니다.');
+    }
+
+    await userRepository.updateLastLogin(user.id);
+
+    const tokenPayload = {
+      userId: user.id,
+      role: user.role,
+      status: user.status,
+      tier: user.tier,
+    };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      createAccessToken(tokenPayload),
+      createRefreshToken(tokenPayload),
+    ]);
+
+    const session = await sessionRepository.create({
+      userId: user.id,
+      refreshTokenHash: hashRefreshToken(refreshToken),
+      platform: meta.platform,
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+      expiresAt: getRefreshExpiresAt(),
+    });
+
+    return {
+      tokens: {
+        accessToken,
+        refreshToken,
+        expiresIn: 900,
+      },
+      user: {
+        id: user.id,
+        kakaoId: user.kakaoId,
+        email: user.email,
+        name: user.name ?? '',
+        nickname: user.nickname ?? '',
+        phone: user.phone ?? '',
+        profileImage: user.profileImage,
+        tier: user.tier,
+        role: user.role,
+        status: user.status,
+        bankName: user.bankName,
+        accountNumber: user.accountNumber,
+        accountHolder: user.accountHolder,
+        createdAt: user.createdAt.toISOString(),
+      },
+      isNewUser: false,
+      sessionId: session.id,
+    };
+  },
+
   /** 세션 해제 */
   async revokeSession(sessionId: string, userId: string) {
     const session = await sessionRepository.findById(sessionId);

@@ -12,6 +12,7 @@ import { seedAdminUser } from './admin-user';
 import { seedStudios } from './studios';
 import { seedAdditionalServices } from './additional-services';
 import { seedFeatureFlags } from './feature-flags';
+import { seedDevUsers } from './dev-users';
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
@@ -41,6 +42,9 @@ async function main() {
 
   await seedFeatureFlags(db);
   console.warn('  Feature Flags 완료');
+
+  await seedDevUsers(db);
+  console.warn('  개발용 테스트 유저 완료');
 
   console.warn('시드 완료!');
   await client.end();

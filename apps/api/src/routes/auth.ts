@@ -82,4 +82,32 @@ auth.delete('/sessions/:id', requireAuth, async (c) => {
   return success(c, { message: '세션이 해제되었습니다.' });
 });
 
+// GET /auth/dev-login/:role — 개발용 역할별 로그인 (프로덕션 차단)
+const DEV_ROLE_KAKAO_ID: Record<string, string> = {
+  member: 'dev_member_001',
+  operator: 'dev_operator_001',
+  admin: 'admin_seed_001',
+  pending: 'dev_pending_001',
+};
+
+auth.get('/dev-login/:role', async (c) => {
+  if (process.env.NODE_ENV === 'production') {
+    return c.notFound();
+  }
+
+  const role = c.req.param('role');
+  const kakaoId = DEV_ROLE_KAKAO_ID[role];
+  if (!kakaoId) {
+    return c.notFound();
+  }
+
+  const result = await authService.devLogin(kakaoId, {
+    platform: 'WEB',
+    ipAddress: c.req.header('x-forwarded-for') ?? '',
+    userAgent: c.req.header('user-agent') ?? '',
+  });
+
+  return success(c, result);
+});
+
 export default auth;
