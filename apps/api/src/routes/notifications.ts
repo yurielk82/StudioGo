@@ -10,6 +10,7 @@ import {
   TestNotificationRequestSchema,
   NotificationLogQuerySchema,
 } from '../../../../shared/contracts/schemas/notification';
+import { PaginationRequestSchema } from '../../../../shared/contracts/api-response';
 import { sendAlimtalk } from '../lib/kakao-bizmessage';
 
 const notificationsRoute = new Hono();
@@ -17,8 +18,7 @@ const notificationsRoute = new Hono();
 // GET /notifications — 내 인앱 알림 목록
 notificationsRoute.get('/', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const page = Number(c.req.query('page') ?? '1');
-  const limit = Number(c.req.query('limit') ?? '20');
+  const { page, limit } = PaginationRequestSchema.parse(c.req.query());
 
   const result = await notificationRepository.getAppNotifications(user.userId, page, limit);
   return success(c, {
