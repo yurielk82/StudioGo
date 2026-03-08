@@ -13,7 +13,7 @@ export default function AnnouncementsScreen() {
   const { data, isLoading } = useAnnouncements();
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         공지사항
       </StyledText>
@@ -25,11 +25,15 @@ export default function AnnouncementsScreen() {
           data={data ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
-              <View className="flex-row justify-between items-start mb-2">
-                <View className="flex-row items-center flex-1">
+            <GlassCard className="mb-2 p-4">
+              <View className="mb-2 flex-row items-start justify-between">
+                <View className="flex-1 flex-row items-center">
                   <Megaphone size={16} color={COLORS.primary.DEFAULT} />
-                  <StyledText variant="body-lg" className="ml-2 font-medium flex-1" numberOfLines={1}>
+                  <StyledText
+                    variant="body-lg"
+                    className="ml-2 flex-1 font-medium"
+                    numberOfLines={1}
+                  >
                     {item.title}
                   </StyledText>
                 </View>
@@ -46,7 +50,7 @@ export default function AnnouncementsScreen() {
             </GlassCard>
           )}
           ListEmptyComponent={
-            <StyledText variant="body-md" className="text-neutral-400 text-center py-8">
+            <StyledText variant="body-md" className="py-8 text-center text-neutral-400">
               공지사항이 없습니다.
             </StyledText>
           }

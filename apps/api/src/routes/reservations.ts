@@ -10,7 +10,8 @@ import {
   ReservationListQuerySchema,
   CompleteReservationRequestSchema,
 } from '../../../../shared/contracts/schemas/reservation';
-import { IdParamSchema, PaginationRequestSchema } from '../../../../shared/contracts/api-response';
+import { PaginationRequestSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 
 const reservationsRoute = new Hono();
 
@@ -24,7 +25,7 @@ reservationsRoute.post('/', requireAuth, requireApproved, async (c) => {
 
 // POST /reservations/:id/cancel — 예약 취소
 reservationsRoute.post('/:id/cancel', requireAuth, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = CancelReservationRequestSchema.parse(await c.req.json());
   const isOp = user.role === 'OPERATOR' || user.role === 'ADMIN';
@@ -35,7 +36,7 @@ reservationsRoute.post('/:id/cancel', requireAuth, async (c) => {
 
 // POST /reservations/:id/approve — 예약 승인
 reservationsRoute.post('/:id/approve', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
 
   await reservationService.approve(id, user.userId);
@@ -44,7 +45,7 @@ reservationsRoute.post('/:id/approve', requireAuth, requireOperator, async (c) =
 
 // POST /reservations/:id/reject — 예약 거절
 reservationsRoute.post('/:id/reject', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = RejectReservationRequestSchema.parse(await c.req.json());
 
@@ -91,14 +92,14 @@ reservationsRoute.get('/my/stats', requireAuth, async (c) => {
 
 // GET /reservations/:id — 예약 상세
 reservationsRoute.get('/:id', requireAuth, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const reservation = await reservationService.getById(id);
   return success(c, reservation);
 });
 
 // POST /reservations/:id/complete — 방송 완료
 reservationsRoute.post('/:id/complete', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
   const body = CompleteReservationRequestSchema.parse(await c.req.json());
 
@@ -108,7 +109,7 @@ reservationsRoute.post('/:id/complete', requireAuth, requireOperator, async (c) 
 
 // POST /reservations/:id/no-show — 노쇼 처리
 reservationsRoute.post('/:id/no-show', requireAuth, requireOperator, async (c) => {
-  const { id } = IdParamSchema.parse({ id: c.req.param('id') });
+  const id = parseIdParam(c);
   const user = getAuthUser(c);
 
   await reservationService.noShow(id, user.userId);

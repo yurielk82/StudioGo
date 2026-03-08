@@ -61,12 +61,22 @@ export const API_ROUTES = {
     permissions: (operatorId: string) => `${API_BASE}/admin/permissions/${operatorId}`,
   },
 
+  // 캘린더
+  CALENDAR: {
+    MONTHLY: `${API_BASE}/calendar/monthly`,
+    WEEKLY: `${API_BASE}/calendar/weekly`,
+    DAILY: `${API_BASE}/calendar/daily`,
+  },
+
   // 알림
   NOTIFICATIONS: {
     BASE: `${API_BASE}/notifications`,
     SETTINGS: `${API_BASE}/notifications/settings`,
     settingByEventType: (eventType: string) => `${API_BASE}/notifications/settings/${eventType}`,
   },
+
+  // 부가서비스 (공개, MEMBER+ 권한)
+  SERVICES: `${API_BASE}/services`,
 
   // 운영자
   OPERATOR: {
@@ -105,6 +115,9 @@ export const QUERY_KEYS = {
     all: ['notifications'] as const,
     unreadCount: ['notifications', 'unread-count'] as const,
     settings: ['notifications', 'settings'] as const,
+  },
+  services: {
+    all: ['services'] as const,
   },
   calendar: {
     monthly: (year: number, month: number) => ['calendar', 'monthly', year, month] as const,

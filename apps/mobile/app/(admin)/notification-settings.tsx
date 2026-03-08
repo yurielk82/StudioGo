@@ -25,14 +25,14 @@ export default function NotificationSettingsScreen() {
 
   if (isLoading) {
     return (
-      <Screen>
+      <Screen centered>
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </Screen>
     );
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-1">
         알림 설정
       </StyledText>

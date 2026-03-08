@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppProviders } from '@/providers/AppProviders';
 import { AuthGuard } from '@/providers/AuthGuard';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 /**
  * 루트 레이아웃 — 전체 앱의 최상위
@@ -12,22 +13,24 @@ import { AuthGuard } from '@/providers/AuthGuard';
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppProviders>
-        <AuthGuard>
-          <StatusBar style="auto" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: 'slide_from_right',
-            }}
-          >
-            <Stack.Screen name="(public)" />
-            <Stack.Screen name="(member)" />
-            <Stack.Screen name="(operator)" />
-            <Stack.Screen name="(admin)" />
-          </Stack>
-        </AuthGuard>
-      </AppProviders>
+      <ErrorBoundary>
+        <AppProviders>
+          <AuthGuard>
+            <StatusBar style="auto" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: 'slide_from_right',
+              }}
+            >
+              <Stack.Screen name="(public)" />
+              <Stack.Screen name="(member)" />
+              <Stack.Screen name="(operator)" />
+              <Stack.Screen name="(admin)" />
+            </Stack>
+          </AuthGuard>
+        </AppProviders>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }

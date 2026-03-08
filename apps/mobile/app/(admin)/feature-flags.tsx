@@ -8,7 +8,7 @@ export default function FeatureFlagsScreen() {
   const toggle = useToggleFeatureFlag();
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         기능 플래그
       </StyledText>
@@ -20,17 +20,20 @@ export default function FeatureFlagsScreen() {
           data={data ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
+            <GlassCard className="mb-2 p-4">
               <View className="flex-row items-center justify-between">
-                <View className="flex-1 mr-4">
+                <View className="mr-4 flex-1">
                   <View className="flex-row items-center">
-                    <ToggleLeft size={16} color={item.enabled ? COLORS.success : COLORS.neutral[400]} />
+                    <ToggleLeft
+                      size={16}
+                      color={item.enabled ? COLORS.success : COLORS.neutral[400]}
+                    />
                     <StyledText variant="body-lg" className="ml-2 font-medium">
                       {item.key}
                     </StyledText>
                   </View>
                   {item.description && (
-                    <StyledText variant="caption" className="text-neutral-400 mt-1">
+                    <StyledText variant="caption" className="mt-1 text-neutral-400">
                       {item.description}
                     </StyledText>
                   )}

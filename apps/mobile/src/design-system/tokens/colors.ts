@@ -51,6 +51,10 @@ export const COLORS = {
     border: 'rgba(255,255,255,0.1)',
   },
 
+  // 기본
+  white: '#FFFFFF',
+  black: '#000000',
+
   // 중립
   neutral: {
     50: '#FAFAFA',
@@ -63,6 +67,13 @@ export const COLORS = {
     700: '#616161',
     800: '#424242',
     900: '#212121',
+  },
+
+  // 외부 브랜드
+  kakao: {
+    DEFAULT: '#FEE500',
+    active: '#E5CF00',
+    text: '#391B1B',
   },
 
   // 그라디언트 프리셋

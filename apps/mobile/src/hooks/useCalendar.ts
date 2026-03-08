@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { QUERY_KEYS } from '@/constants/api';
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001/api';
+import { API_ROUTES, QUERY_KEYS } from '@/constants/api';
 
 interface CalendarSlot {
   id: string;
@@ -40,14 +38,14 @@ export function useMonthlyCalendar(year: number, month: number) {
   return useQuery({
     queryKey: QUERY_KEYS.calendar.monthly(year, month),
     queryFn: () =>
-      apiClient<MonthlyData>(`${API_BASE}/calendar/monthly?year=${year}&month=${month}`),
+      apiClient<MonthlyData>(`${API_ROUTES.CALENDAR.MONTHLY}?year=${year}&month=${month}`),
   });
 }
 
 export function useWeeklyCalendar(date: string) {
   return useQuery({
     queryKey: QUERY_KEYS.calendar.weekly(date),
-    queryFn: () => apiClient<WeeklyData>(`${API_BASE}/calendar/weekly?date=${date}`),
+    queryFn: () => apiClient<WeeklyData>(`${API_ROUTES.CALENDAR.WEEKLY}?date=${date}`),
     enabled: !!date,
   });
 }
@@ -55,7 +53,7 @@ export function useWeeklyCalendar(date: string) {
 export function useDailyCalendar(date: string) {
   return useQuery({
     queryKey: QUERY_KEYS.calendar.daily(date),
-    queryFn: () => apiClient<DailyData>(`${API_BASE}/calendar/daily?date=${date}`),
+    queryFn: () => apiClient<DailyData>(`${API_ROUTES.CALENDAR.DAILY}?date=${date}`),
     enabled: !!date,
   });
 }

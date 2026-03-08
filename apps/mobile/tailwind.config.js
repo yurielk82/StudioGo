@@ -69,6 +69,13 @@ module.exports = {
           900: '#212121',
         },
 
+        // 외부 브랜드
+        kakao: {
+          DEFAULT: '#FEE500',
+          active: '#E5CF00',
+          text: '#391B1B',
+        },
+
         // 다크모드 표면
         dark: {
           bg: '#0D0D1A',

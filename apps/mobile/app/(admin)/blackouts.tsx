@@ -14,7 +14,7 @@ export default function BlackoutsScreen() {
   const { data, isLoading } = useBlackouts();
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         블랙아웃 관리
       </StyledText>

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import app from '../app';
+import { APP_NAME, API_VERSION } from '../../../../shared/constants';
 
 describe('API 헬스체크', () => {
   it('GET /api — 정상 응답', async () => {
@@ -8,10 +9,11 @@ describe('API 헬스체크', () => {
 
     const data = (await res.json()) as {
       success: boolean;
-      data: { service: string; status: string };
+      data: { service: string; version: string; status: string };
     };
     expect(data.success).toBe(true);
-    expect(data.data.service).toBe('StudioGo API');
+    expect(data.data.service).toBe(`${APP_NAME} API`);
+    expect(data.data.version).toBe(API_VERSION);
     expect(data.data.status).toBe('healthy');
   });
 });

@@ -65,7 +65,7 @@ export default function FulfillmentScreen() {
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         포장/출고 관리
       </StyledText>

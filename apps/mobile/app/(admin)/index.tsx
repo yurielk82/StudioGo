@@ -32,7 +32,7 @@ export default function AdminHomeScreen() {
   const router = useRouter();
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-6">
         관리자 패널
       </StyledText>
@@ -42,10 +42,10 @@ export default function AdminHomeScreen() {
           <Pressable
             key={key}
             onPress={() => router.push(route as never)}
-            className="w-[48%]"
+            className="w-[48%] md:w-[31%] lg:w-[23%]"
           >
-            <GlassCard className="p-5 items-center">
-              <View className="w-12 h-12 rounded-full bg-primary-50 items-center justify-center mb-3">
+            <GlassCard className="items-center p-5">
+              <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-primary-50">
                 <Icon size={24} color={COLORS.primary.DEFAULT} />
               </View>
               <StyledText variant="label-lg">{label}</StyledText>

@@ -20,7 +20,7 @@ export default function OperatorDashboardScreen() {
 
   if (isLoading) {
     return (
-      <Screen>
+      <Screen centered>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
         </View>
@@ -29,14 +29,14 @@ export default function OperatorDashboardScreen() {
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         운영자 대시보드
       </StyledText>
 
       {/* 통계 카드 */}
       <View className="mb-6 flex-row flex-wrap gap-3">
-        <GlassCard className="min-w-[45%] flex-1 p-4">
+        <GlassCard className="min-w-[45%] flex-1 p-4 md:min-w-[22%]">
           <View className="mb-2 flex-row items-center">
             <Calendar size={18} color={COLORS.primary.DEFAULT} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
@@ -46,7 +46,7 @@ export default function OperatorDashboardScreen() {
           <StyledText variant="display-sm">{String(data?.todayReservations ?? 0)}</StyledText>
         </GlassCard>
 
-        <GlassCard className="min-w-[45%] flex-1 p-4">
+        <GlassCard className="min-w-[45%] flex-1 p-4 md:min-w-[22%]">
           <View className="mb-2 flex-row items-center">
             <Clock size={18} color={COLORS.warning} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
@@ -58,7 +58,7 @@ export default function OperatorDashboardScreen() {
           </StyledText>
         </GlassCard>
 
-        <GlassCard className="min-w-[45%] flex-1 p-4">
+        <GlassCard className="min-w-[45%] flex-1 p-4 md:min-w-[22%]">
           <View className="mb-2 flex-row items-center">
             <ClipboardCheck size={18} color={COLORS.success} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">
@@ -68,7 +68,7 @@ export default function OperatorDashboardScreen() {
           <StyledText variant="display-sm">{String(data?.todayCheckins ?? 0)}</StyledText>
         </GlassCard>
 
-        <GlassCard className="min-w-[45%] flex-1 p-4">
+        <GlassCard className="min-w-[45%] flex-1 p-4 md:min-w-[22%]">
           <View className="mb-2 flex-row items-center">
             <Users size={18} color={COLORS.secondary.DEFAULT} />
             <StyledText variant="label-md" className="ml-2 text-neutral-500">

@@ -65,7 +65,7 @@ export default function OperatorReservationsScreen() {
   const filterLabels = ['대기', '승인', '완료', '전체'];
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         예약 관리
       </StyledText>
@@ -147,7 +147,7 @@ export default function OperatorReservationsScreen() {
                       selectedIds.has(item.id) ? 'border-primary bg-primary' : 'border-neutral-300'
                     }`}
                   >
-                    {selectedIds.has(item.id) && <Check size={12} color="#FFF" />}
+                    {selectedIds.has(item.id) && <Check size={12} color={COLORS.white} />}
                   </View>
                 )}
                 <View className="flex-1">

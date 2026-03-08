@@ -61,7 +61,7 @@ export default function MemberHomeScreen() {
         <Pressable onPress={() => router.push('/(member)/reservation/new')} className="flex-1">
           <GlassCard className="items-center p-4">
             <View className="mb-2 h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <Plus size={20} color="#FFFFFF" />
+              <Plus size={20} color={COLORS.white} />
             </View>
             <StyledText variant="label-md">새 예약</StyledText>
           </GlassCard>
@@ -70,7 +70,7 @@ export default function MemberHomeScreen() {
         <Pressable onPress={() => router.push('/(member)/reservation/list')} className="flex-1">
           <GlassCard className="items-center p-4">
             <View className="mb-2 h-10 w-10 items-center justify-center rounded-full bg-secondary">
-              <List size={20} color="#FFFFFF" />
+              <List size={20} color={COLORS.white} />
             </View>
             <StyledText variant="label-md">예약 내역</StyledText>
           </GlassCard>

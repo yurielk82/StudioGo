@@ -9,7 +9,7 @@ const HOURS = Array.from({ length: 14 }, (_, i) => i + 7); // 07:00~20:00
 
 interface WeeklyViewProps {
   startDate: string;
-  onSelectSlot?: (slotId: string) => void;
+  onSelectSlot?: (slot: { id: string; date: string }) => void;
 }
 
 export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
@@ -80,7 +80,7 @@ export function WeeklyView({ startDate, onSelectSlot }: WeeklyViewProps) {
                 return (
                   <Pressable
                     key={hour}
-                    onPress={() => slot && onSelectSlot?.(slot.id)}
+                    onPress={() => slot && onSelectSlot?.({ id: slot.id, date: slot.date })}
                     className="h-14 border-t border-neutral-100 px-0.5"
                   >
                     {slot && (

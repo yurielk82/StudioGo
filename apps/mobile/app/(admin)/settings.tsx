@@ -19,22 +19,19 @@ export default function SettingsScreen() {
 
   function handleSave() {
     if (!editingKey) return;
-    update.mutate(
-      { key: editingKey, value: editValue },
-      { onSuccess: () => setEditingKey(null) },
-    );
+    update.mutate({ key: editingKey, value: editValue }, { onSuccess: () => setEditingKey(null) });
   }
 
   if (isLoading) {
     return (
-      <Screen>
+      <Screen centered>
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} className="mt-12" />
       </Screen>
     );
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         운영 설정
       </StyledText>
@@ -43,35 +40,41 @@ export default function SettingsScreen() {
         data={data ?? []}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
-          <GlassCard className="p-4 mb-2">
-            <StyledText variant="label-md" className="text-neutral-500 mb-1">
+          <GlassCard className="mb-2 p-4">
+            <StyledText variant="label-md" className="mb-1 text-neutral-500">
               {item.key}
             </StyledText>
             {item.description && (
-              <StyledText variant="caption" className="text-neutral-400 mb-2">
+              <StyledText variant="caption" className="mb-2 text-neutral-400">
                 {item.description}
               </StyledText>
             )}
 
             {editingKey === item.key ? (
               <View>
-                <Input
-                  value={editValue}
-                  onChangeText={setEditValue}
-                  className="mb-2"
-                />
+                <Input value={editValue} onChangeText={setEditValue} className="mb-2" />
                 <View className="flex-row gap-2">
-                  <Button variant="ghost" size="sm" onPress={() => setEditingKey(null)} className="flex-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onPress={() => setEditingKey(null)}
+                    className="flex-1"
+                  >
                     취소
                   </Button>
-                  <Button size="sm" onPress={handleSave} loading={update.isPending} className="flex-1">
+                  <Button
+                    size="sm"
+                    onPress={handleSave}
+                    loading={update.isPending}
+                    className="flex-1"
+                  >
                     저장
                   </Button>
                 </View>
               </View>
             ) : (
               <View className="flex-row items-center justify-between">
-                <StyledText variant="body-lg" className="font-medium flex-1">
+                <StyledText variant="body-lg" className="flex-1 font-medium">
                   {item.value}
                 </StyledText>
                 <Button variant="ghost" size="sm" onPress={() => startEdit(item.key, item.value)}>

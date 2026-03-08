@@ -26,16 +26,20 @@ export default function StudiosScreen() {
   }
 
   return (
-    <Screen>
-      <View className="flex-row items-center justify-between mb-4">
+    <Screen centered>
+      <View className="mb-4 flex-row items-center justify-between">
         <StyledText variant="heading-lg">스튜디오 관리</StyledText>
-        <Button size="sm" icon={<Plus size={16} color="#FFF" />} onPress={() => setShowForm(true)}>
+        <Button
+          size="sm"
+          icon={<Plus size={16} color={COLORS.white} />}
+          onPress={() => setShowForm(true)}
+        >
           추가
         </Button>
       </View>
 
       {showForm && (
-        <GlassCard className="p-4 mb-4">
+        <GlassCard className="mb-4 p-4">
           <Input label="이름" value={name} onChangeText={setName} className="mb-3" />
           <Input
             label="수용 인원"
@@ -62,7 +66,7 @@ export default function StudiosScreen() {
           data={data ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
+            <GlassCard className="mb-2 p-4">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Building2 size={18} color={COLORS.primary.DEFAULT} />
@@ -74,7 +78,7 @@ export default function StudiosScreen() {
                   {item.isActive ? '활성' : '비활성'}
                 </Badge>
               </View>
-              <StyledText variant="body-sm" className="text-neutral-500 mt-1">
+              <StyledText variant="body-sm" className="mt-1 text-neutral-500">
                 수용 인원: {item.capacity}명
               </StyledText>
             </GlassCard>

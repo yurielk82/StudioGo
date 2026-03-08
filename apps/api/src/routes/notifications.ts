@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { requireAuth, requireOperator, requireAdmin, getAuthUser } from '../middleware/auth';
 import { notificationRepository } from '../repositories/notification-repository';
 import { success, paginated } from '../lib/response';
@@ -10,6 +11,8 @@ import {
   TestNotificationRequestSchema,
   NotificationLogQuerySchema,
 } from '../../../../shared/contracts/schemas/notification';
+import { PaginationRequestSchema } from '../../../../shared/contracts/api-response';
+import { parseIdParam } from '../lib/request-helpers';
 import { sendAlimtalk } from '../lib/kakao-bizmessage';
 
 const notificationsRoute = new Hono();
@@ -17,8 +20,7 @@ const notificationsRoute = new Hono();
 // GET /notifications — 내 인앱 알림 목록
 notificationsRoute.get('/', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const page = Number(c.req.query('page') ?? '1');
-  const limit = Number(c.req.query('limit') ?? '20');
+  const { page, limit } = PaginationRequestSchema.parse(c.req.query());
 
   const result = await notificationRepository.getAppNotifications(user.userId, page, limit);
   return success(c, {
@@ -30,7 +32,7 @@ notificationsRoute.get('/', requireAuth, async (c) => {
 // POST /notifications/:id/read — 읽음 처리
 notificationsRoute.post('/:id/read', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const id = c.req.param('id') ?? '';
+  const id = parseIdParam(c);
   await notificationRepository.markAsRead(id, user.userId);
   return success(c, { message: '읽음 처리 완료' });
 });
@@ -53,7 +55,7 @@ notificationsRoute.get('/settings', requireAuth, requireAdmin, async (c) => {
 
 // PATCH /notifications/settings/:eventType — 알림 설정 수정 (ADMIN)
 notificationsRoute.patch('/settings/:eventType', requireAuth, requireAdmin, async (c) => {
-  const eventType = c.req.param('eventType');
+  const eventType = z.string().min(1).parse(c.req.param('eventType'));
   const body = UpdateNotificationSettingRequestSchema.parse(await c.req.json());
 
   await db

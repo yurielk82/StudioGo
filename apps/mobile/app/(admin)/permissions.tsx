@@ -32,7 +32,7 @@ export default function PermissionsScreen() {
 
   if (isLoadingOperators) {
     return (
-      <Screen>
+      <Screen centered>
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </Screen>
     );
@@ -41,7 +41,7 @@ export default function PermissionsScreen() {
   // 운영자 선택 전: 목록 표시
   if (!selectedOperatorId) {
     return (
-      <Screen>
+      <Screen centered>
         <StyledText variant="heading-lg" className="mb-4">
           권한 관리
         </StyledText>
@@ -84,7 +84,7 @@ export default function PermissionsScreen() {
   const selectedOperator = operators.find((o) => o.id === selectedOperatorId);
 
   return (
-    <Screen>
+    <Screen centered>
       <Pressable onPress={() => setSelectedOperatorId(null)}>
         <StyledText variant="body-sm" className="mb-2 text-primary">
           ← 운영자 목록
