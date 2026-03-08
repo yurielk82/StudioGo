@@ -21,22 +21,15 @@ export function GlassCard({
 }: GlassCardProps) {
   if (Platform.OS === 'web') {
     return (
-      <View
-        className={`rounded-card overflow-hidden ${className}`}
-        style={webStyles.glass}
-      >
+      <View className={`overflow-hidden rounded-card ${className}`} style={webStyles.glass}>
         {children}
       </View>
     );
   }
 
   return (
-    <View className={`rounded-card overflow-hidden ${className}`}>
-      <BlurView
-        intensity={intensity}
-        tint={tint}
-        style={StyleSheet.absoluteFill}
-      />
+    <View className={`overflow-hidden rounded-card ${className}`}>
+      <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
       <View className="relative z-10">{children}</View>
     </View>
   );
@@ -44,7 +37,6 @@ export function GlassCard({
 
 const webStyles = StyleSheet.create({
   glass: {
-    // @ts-expect-error -- 웹 전용 CSS 속성
     backdropFilter: 'blur(20px)',
     backgroundColor: 'rgba(255,255,255,0.7)',
     borderWidth: 1,
