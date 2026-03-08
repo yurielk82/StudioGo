@@ -17,6 +17,12 @@ import waitlistRoutes from './routes/waitlist';
 import assetsRoutes from './routes/assets';
 import servicesRoutes from './routes/services';
 import { APP_NAME, API_VERSION } from '../../../shared/constants';
+import { env } from './lib/env';
+
+const CORS_ORIGINS =
+  env.NODE_ENV === 'production'
+    ? [env.APP_URL]
+    : ['http://localhost:8081', 'http://localhost:3000'];
 
 const app = new Hono().basePath('/api');
 
@@ -26,7 +32,7 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: [process.env.APP_URL ?? 'http://localhost:8081'],
+    origin: CORS_ORIGINS,
     credentials: true,
   }),
 );
