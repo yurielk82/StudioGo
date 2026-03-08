@@ -26,7 +26,7 @@ export default function StudiosScreen() {
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <View className="mb-4 flex-row items-center justify-between">
         <StyledText variant="heading-lg">스튜디오 관리</StyledText>
         <Button

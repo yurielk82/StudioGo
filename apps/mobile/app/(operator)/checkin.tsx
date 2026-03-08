@@ -17,10 +17,7 @@ export default function CheckinScreen() {
 
   function handleCheckin() {
     if (!reservationId.trim()) return;
-    checkin.mutate(
-      { reservationId, method },
-      { onSuccess: () => setReservationId('') },
-    );
+    checkin.mutate({ reservationId, method }, { onSuccess: () => setReservationId('') });
   }
 
   function handleCheckout() {
@@ -31,23 +28,26 @@ export default function CheckinScreen() {
   }
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         체크인/체크아웃
       </StyledText>
 
       {/* 방법 선택 */}
-      <View className="flex-row gap-3 mb-6">
-        {([
+      <View className="mb-6 flex-row gap-3">
+        {[
           { key: 'QR' as const, icon: QrCode, label: 'QR 스캔' },
           { key: 'PIN' as const, icon: Hash, label: 'PIN 입력' },
           { key: 'MANUAL' as const, icon: Hand, label: '수동' },
-        ]).map(({ key, icon: Icon, label }) => (
+        ].map(({ key, icon: Icon, label }) => (
           <Pressable key={key} onPress={() => setMethod(key)} className="flex-1">
             <GlassCard
-              className={`p-4 items-center ${method === key ? 'border-2 border-primary' : ''}`}
+              className={`items-center p-4 ${method === key ? 'border-2 border-primary' : ''}`}
             >
-              <Icon size={24} color={method === key ? COLORS.primary.DEFAULT : COLORS.neutral[500]} />
+              <Icon
+                size={24}
+                color={method === key ? COLORS.primary.DEFAULT : COLORS.neutral[500]}
+              />
               <StyledText
                 variant="label-md"
                 className={`mt-1 ${method === key ? 'text-primary' : 'text-neutral-500'}`}
@@ -60,11 +60,11 @@ export default function CheckinScreen() {
       </View>
 
       {/* 입력 */}
-      <GlassCard className="p-5 mb-6">
+      <GlassCard className="mb-6 p-5">
         {method === 'QR' ? (
           <View className="items-center py-12">
             <QrCode size={64} color={COLORS.neutral[300]} />
-            <StyledText variant="body-md" className="text-neutral-500 mt-4">
+            <StyledText variant="body-md" className="mt-4 text-neutral-500">
               QR 코드 스캐너는 카메라 권한이 필요합니다.
             </StyledText>
           </View>
@@ -81,17 +81,17 @@ export default function CheckinScreen() {
 
       {/* 성공/에러 메시지 */}
       {checkin.isSuccess && (
-        <StyledText variant="body-md" className="text-success text-center mb-3">
+        <StyledText variant="body-md" className="mb-3 text-center text-success">
           체크인 완료!
         </StyledText>
       )}
       {checkin.error && (
-        <StyledText variant="body-md" className="text-error text-center mb-3">
+        <StyledText variant="body-md" className="mb-3 text-center text-error">
           체크인 실패. 예약 정보를 확인하세요.
         </StyledText>
       )}
       {checkout.isSuccess && (
-        <StyledText variant="body-md" className="text-success text-center mb-3">
+        <StyledText variant="body-md" className="mb-3 text-center text-success">
           체크아웃 완료!
         </StyledText>
       )}

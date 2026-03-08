@@ -21,7 +21,7 @@ export default function MembersScreen() {
   const labels = ['전체', '활성', '대기', '정지'];
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         회원 관리
       </StyledText>
@@ -34,12 +34,12 @@ export default function MembersScreen() {
         className="mb-4"
       />
 
-      <View className="flex-row mb-4">
+      <View className="mb-4 flex-row">
         {statuses.map((s, i) => (
           <Pressable
             key={labels[i]}
             onPress={() => setStatusFilter(s)}
-            className={`mr-2 px-3 py-1.5 rounded-chip ${statusFilter === s ? 'bg-primary' : 'bg-neutral-100'}`}
+            className={`mr-2 rounded-chip px-3 py-1.5 ${statusFilter === s ? 'bg-primary' : 'bg-neutral-100'}`}
           >
             <StyledText
               variant="label-md"
@@ -58,9 +58,9 @@ export default function MembersScreen() {
           data={data?.items ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <GlassCard className="p-4 mb-2">
+            <GlassCard className="mb-2 p-4">
               <View className="flex-row items-center">
-                <View className="w-10 h-10 rounded-full bg-primary-50 items-center justify-center mr-3">
+                <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary-50">
                   <User size={18} color={COLORS.primary.DEFAULT} />
                 </View>
                 <View className="flex-1">
@@ -68,9 +68,7 @@ export default function MembersScreen() {
                     <StyledText variant="body-lg" className="font-medium">
                       {item.nickname}
                     </StyledText>
-                    <Badge variant={TIER_VARIANT[item.tier] ?? 'neutral'}>
-                      {item.tier}
-                    </Badge>
+                    <Badge variant={TIER_VARIANT[item.tier] ?? 'neutral'}>{item.tier}</Badge>
                   </View>
                   <StyledText variant="body-sm" className="text-neutral-500">
                     {item.name} · {item.phone} · 방송 {item.totalBroadcasts}회
@@ -80,7 +78,7 @@ export default function MembersScreen() {
             </GlassCard>
           )}
           ListEmptyComponent={
-            <StyledText variant="body-md" className="text-neutral-400 text-center py-8">
+            <StyledText variant="body-md" className="py-8 text-center text-neutral-400">
               검색 결과가 없습니다.
             </StyledText>
           }

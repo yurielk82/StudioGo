@@ -65,7 +65,7 @@ export default function OperatorReservationsScreen() {
   const filterLabels = ['대기', '승인', '완료', '전체'];
 
   return (
-    <Screen>
+    <Screen centered>
       <StyledText variant="heading-lg" className="mb-4">
         예약 관리
       </StyledText>
