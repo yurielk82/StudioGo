@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { adminService } from '../services/admin-service';
 import { requireAuth, requireAdmin, getAuthUser } from '../middleware/auth';
 import { success, created, noContent, paginated } from '../lib/response';
@@ -31,7 +32,7 @@ adminRoute.get('/settings', async (c) => {
 
 // PATCH /admin/settings/:key — 운영 설정 수정
 adminRoute.patch('/settings/:key', async (c) => {
-  const key = c.req.param('key');
+  const key = z.string().min(1).parse(c.req.param('key'));
   const user = getAuthUser(c);
   const body = UpdateSettingRequestSchema.parse(await c.req.json());
   await adminService.updateSetting(key, body.value, user.userId);
@@ -137,7 +138,7 @@ adminRoute.get('/feature-flags', async (c) => {
 
 // PATCH /admin/feature-flags/:key — flag 수정
 adminRoute.patch('/feature-flags/:key', async (c) => {
-  const key = c.req.param('key');
+  const key = z.string().min(1).parse(c.req.param('key'));
   const user = getAuthUser(c);
   const body = UpdateFeatureFlagRequestSchema.parse(await c.req.json());
   const flag = await adminService.updateFeatureFlag(key, body, user.userId);
@@ -187,7 +188,7 @@ adminRoute.get('/permissions', async (c) => {
 
 // PATCH /admin/permissions/:userId — 권한 수정
 adminRoute.patch('/permissions/:userId', async (c) => {
-  const userId = c.req.param('userId');
+  const userId = z.string().uuid().parse(c.req.param('userId'));
   const user = getAuthUser(c);
   const body = UpdatePermissionsRequestSchema.parse(await c.req.json());
   await adminService.updatePermissions(userId, body, user.userId);

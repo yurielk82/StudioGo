@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { slotService } from '../services/slot-service';
 import { requireAuth, requireApproved, requireAdmin, getAuthUser } from '../middleware/auth';
 import { success, created } from '../lib/response';
@@ -33,7 +34,7 @@ slotsRoute.post('/hold', requireAuth, requireApproved, async (c) => {
 // DELETE /slots/hold/:token — hold 해제
 slotsRoute.delete('/hold/:token', requireAuth, async (c) => {
   const user = getAuthUser(c);
-  const token = c.req.param('token') ?? '';
+  const token = z.string().uuid().parse(c.req.param('token'));
   await slotService.cancelHold(token, user.userId);
   return success(c, { message: 'Hold가 해제되었습니다.' });
 });

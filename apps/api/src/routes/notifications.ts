@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { requireAuth, requireOperator, requireAdmin, getAuthUser } from '../middleware/auth';
 import { notificationRepository } from '../repositories/notification-repository';
 import { success, paginated } from '../lib/response';
@@ -54,7 +55,7 @@ notificationsRoute.get('/settings', requireAuth, requireAdmin, async (c) => {
 
 // PATCH /notifications/settings/:eventType — 알림 설정 수정 (ADMIN)
 notificationsRoute.patch('/settings/:eventType', requireAuth, requireAdmin, async (c) => {
-  const eventType = c.req.param('eventType');
+  const eventType = z.string().min(1).parse(c.req.param('eventType'));
   const body = UpdateNotificationSettingRequestSchema.parse(await c.req.json());
 
   await db
