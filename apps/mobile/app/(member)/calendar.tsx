@@ -108,7 +108,15 @@ export default function CalendarScreen() {
           onSelectDate={handleSelectDate}
         />
       )}
-      {mode === 'weekly' && <WeeklyView startDate={selectedDate} />}
+      {mode === 'weekly' && (
+        <WeeklyView
+          startDate={selectedDate}
+          onSelectSlot={(slot) => {
+            setSelectedDate(slot.date);
+            setMode('daily');
+          }}
+        />
+      )}
       {mode === 'daily' && <DailyView date={selectedDate} />}
     </Screen>
   );

@@ -60,6 +60,13 @@ export const API_ROUTES = {
     permissions: (operatorId: string) => `${API_BASE}/admin/permissions/${operatorId}`,
   },
 
+  // 캘린더
+  CALENDAR: {
+    MONTHLY: `${API_BASE}/calendar/monthly`,
+    WEEKLY: `${API_BASE}/calendar/weekly`,
+    DAILY: `${API_BASE}/calendar/daily`,
+  },
+
   // 알림
   NOTIFICATIONS: {
     BASE: `${API_BASE}/notifications`,
