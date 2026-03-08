@@ -1,13 +1,14 @@
 // Vercel Build Output API를 사용하여 CJS 번들 생성
 // ESM→CJS 변환으로 Vercel 서버리스 런타임 호환성 확보
 import { build } from 'esbuild';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, cpSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FUNC_DIR = resolve(__dirname, '.vercel/output/functions/api/index.func');
 const OUTPUT_DIR = resolve(__dirname, '.vercel/output');
+const STATIC_DIR = resolve(OUTPUT_DIR, 'static');
 
 mkdirSync(FUNC_DIR, { recursive: true });
 
@@ -45,6 +46,14 @@ writeFileSync(
     shouldAddSourcemapSupport: false,
   }),
 );
+
+// 정적 파일 복사 (이용약관, 개인정보처리방침 등)
+const publicDir = resolve(__dirname, 'public');
+if (existsSync(publicDir)) {
+  mkdirSync(STATIC_DIR, { recursive: true });
+  cpSync(publicDir, STATIC_DIR, { recursive: true });
+  console.log('Static files copied from public/');
+}
 
 // Vercel 라우팅 설정
 writeFileSync(
