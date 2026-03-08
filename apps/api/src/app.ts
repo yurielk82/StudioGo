@@ -23,7 +23,14 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: [process.env.APP_URL ?? 'http://localhost:8081'],
+    origin: (origin) => {
+      const allowed = [
+        process.env.APP_URL,
+        'http://localhost:8081',
+        'http://localhost:3001',
+      ].filter(Boolean);
+      return allowed.includes(origin) ? origin : null;
+    },
     credentials: true,
   }),
 );
