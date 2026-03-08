@@ -28,12 +28,18 @@
 | 12 | 🚫 | DEFERRED: QR 스캐너 (expo-camera 의존성 필요) | SOURCE: plan |
 | 13 | 🚫 | DEFERRED: asset-service S3/R2 (aws-sdk 의존성 필요) | SOURCE: plan |
 
-## 최종 상태
+| 14 | ✅ | P2 API 버전 하드코딩 → shared/constants 동기화 | 163aecf |
+| 15 | ✅ | P3 notifications.ts 페이지네이션 수동파싱 → Zod 통일 | cef21b0 |
+| 16 | ✅ | P3 parseIdParam 헬퍼 생성 + 라우트 8곳 적용 | 6346f14 |
+| 17 | ✅ | P3 아이콘 hex 하드코딩 → COLORS 상수 교체 (6곳) | e4639ac |
+| 18 | ✅ | P2 범용 상태머신 테스트 29개 (createStateMachine) | ba397b6 |
+
+## 현재 상태
 
 - TypeScript: ✅ 에러 없음
-- 테스트: ✅ 190/190 통과 (31→190, +159)
+- 테스트: ✅ 219/219 통과
 - ESLint: ✅ 에러 0, 경고 0
-- 버전: 1.3.0
+- 버전: 1.3.1
 
 ## 실행 로그
 
@@ -52,3 +58,23 @@
 - [구현-Opus] 10곳 split('T')[0]! → substring(0, 10)
 - [구현-Opus] reason!, hours!, unit!, Map.get()! 등 개별 수정
 - ESLint 경고 45→0
+
+### 태스크 14 — API 버전 상수화
+
+- [구현-Sonnet] 하드코딩 버전 → shared/constants API_VERSION 참조
+
+### 태스크 15 — notifications 페이지네이션 Zod 통일
+
+- [구현-Sonnet] 수동 Number() 파싱 → PaginationRequestSchema.parse()
+
+### 태스크 16 — parseIdParam 헬퍼
+
+- [구현-Sonnet] request-helpers.ts 생성, reservations 7곳 + notifications 1곳 적용
+
+### 태스크 17 — hex 하드코딩 제거
+
+- [구현-Sonnet] COLORS.white/black 토큰 추가, 6곳 #FFFFFF/#FFF/#6C5CE7 교체
+
+### 태스크 18 — 상태머신 테스트
+
+- [테스트-Sonnet] createStateMachine 29개 테스트 (전이/검증/터미널/에러)
