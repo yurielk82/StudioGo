@@ -64,6 +64,7 @@ npm run dev:all  # 모바일 + API 동시 실행
 
 ## 문서 반영
 
-- 사용자향 기능 추가/변경 시 `~/GitHub/codegear-dev-portal/content/studiogo/` 문서 동시 업데이트
+- 사용자향 기능 추가/변경 시 `docs/manual/` 문서 동시 업데이트 (같은 리포 내)
 - UI 변경 → `user-guide/`, 배포/설정 변경 → `admin-guide/`
 - codegear-dev-portal CLAUDE.md 컨벤션 준수
+- 포털 반영: 포털 리포에서 `git submodule update --remote repos/studiogo`
