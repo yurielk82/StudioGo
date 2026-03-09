@@ -220,6 +220,31 @@ export const authService = {
     };
   },
 
+  /** 현재 사용자 프로필 조회 (DB 기반) */
+  async getProfile(userId: string) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw ApiError.notFound('MEMBER_NOT_FOUND', '사용자를 찾을 수 없습니다.');
+    }
+
+    return {
+      id: user.id,
+      kakaoId: user.kakaoId,
+      email: user.email,
+      name: user.name ?? '',
+      nickname: user.nickname ?? '',
+      phone: user.phone ?? '',
+      profileImage: user.profileImage,
+      tier: user.tier,
+      role: user.role,
+      status: user.status,
+      bankName: user.bankName,
+      accountNumber: user.accountNumber,
+      accountHolder: user.accountHolder,
+      createdAt: user.createdAt.toISOString(),
+    };
+  },
+
   /** 세션 해제 */
   async revokeSession(sessionId: string, userId: string) {
     const session = await sessionRepository.findById(sessionId);

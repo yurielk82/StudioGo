@@ -37,6 +37,19 @@ export default function KakaoCallbackScreen() {
     webLogin.mutate({ code, redirectUri });
   }, []);
 
+  // 성공 시 사용자 상태에 따라 라우팅
+  useEffect(() => {
+    if (webLogin.isSuccess && webLogin.data) {
+      const { isNewUser, user } = webLogin.data;
+      if (isNewUser || !user.nickname) {
+        router.replace('/(public)/signup');
+      } else if (user.status === 'PENDING') {
+        router.replace('/(public)/pending');
+      }
+      // APPROVED 사용자는 AuthGuard가 역할별 홈으로 라우팅
+    }
+  }, [webLogin.isSuccess, webLogin.data]);
+
   // 에러 발생 시 로그인 화면으로
   useEffect(() => {
     if (webLogin.isError) {

@@ -9,7 +9,8 @@ import { COLORS } from '@/design-system';
  * 인증 가드 — 로그인/승인 상태에 따라 라우트 자동 리다이렉트
  *
  * - 비로그인 → (public)
- * - 로그인 + PENDING → (public)/pending
+ * - 로그인 + PENDING + 추가정보 미입력 → (public)/signup
+ * - 로그인 + PENDING + 추가정보 입력 완료 → (public)/pending
  * - 로그인 + SUSPENDED → (public)/suspended
  * - 로그인 + APPROVED + MEMBER → (member)
  * - 로그인 + APPROVED + OPERATOR → (operator)
@@ -39,8 +40,17 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
     // 로그인 상태에서 사용자 상태별 분기
     if (user?.status === 'PENDING') {
+      // 추가정보 미입력 → signup, 입력 완료 → pending (승인 대기)
+      const needsSignup = !user.nickname;
+      const targetPage = needsSignup ? 'signup' : 'pending';
+
       if (currentGroup !== '(public)') {
-        router.replace('/(public)/pending');
+        router.replace(`/(public)/${targetPage}`);
+      } else {
+        const currentPage = segments[1] as string | undefined;
+        if (currentPage !== targetPage) {
+          router.replace(`/(public)/${targetPage}`);
+        }
       }
       return;
     }
@@ -48,6 +58,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     if (user?.status === 'SUSPENDED') {
       if (currentGroup !== '(public)') {
         router.replace('/(public)/suspended');
+      } else {
+        const currentPage = segments[1] as string | undefined;
+        if (currentPage !== 'suspended') {
+          router.replace('/(public)/suspended');
+        }
       }
       return;
     }
@@ -57,7 +72,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       const roleRoute = getRoleRoute(user?.role);
       router.replace(roleRoute);
     }
-  }, [isInitialized, isLoggedIn, user?.status, user?.role, segments]);
+  }, [isInitialized, isLoggedIn, user?.status, user?.role, user?.nickname, segments]);
 
   // 초기화 전 로딩 표시
   if (!isInitialized) {

@@ -47,10 +47,11 @@ auth.post('/signup', requireAuth, async (c) => {
   return created(c, result);
 });
 
-// GET /auth/me — 내 정보
+// GET /auth/me — 내 정보 (DB에서 최신 프로필 조회)
 auth.get('/me', requireAuth, async (c) => {
-  const user = getAuthUser(c);
-  return success(c, user);
+  const { userId } = getAuthUser(c);
+  const profile = await authService.getProfile(userId);
+  return success(c, profile);
 });
 
 // POST /auth/logout — 로그아웃
