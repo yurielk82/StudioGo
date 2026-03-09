@@ -2,10 +2,9 @@ import { View, Platform, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LogIn, UserCheck, ShieldCheck, Settings, Clock } from 'lucide-react-native';
 import { Screen, StyledText, Button, GlassCard, COLORS } from '@/design-system';
-import { useKakaoNativeLogin, useKakaoWebLogin, useDevLogin } from '@/hooks/useAuth';
+import { useKakaoNativeLogin, useDevLogin } from '@/hooks/useAuth';
 
 const KAKAO_AUTH_URL = 'https://kauth.kakao.com/oauth/authorize';
-const WEB_REDIRECT_URI = `${process.env.EXPO_PUBLIC_APP_URL ?? 'http://localhost:8081'}/auth/kakao/callback`;
 
 /**
  * 카카오 로그인 화면
@@ -27,17 +26,17 @@ function isLocalhost(): boolean {
 
 export default function LoginScreen() {
   const nativeLogin = useKakaoNativeLogin();
-  const webLogin = useKakaoWebLogin();
   const devLogin = useDevLogin();
 
-  const isLoading = nativeLogin.isPending || webLogin.isPending || devLogin.isPending;
-  const error = nativeLogin.error ?? webLogin.error ?? devLogin.error;
+  const isLoading = nativeLogin.isPending || devLogin.isPending;
+  const error = nativeLogin.error ?? devLogin.error;
 
   async function handleKakaoLogin() {
     if (Platform.OS === 'web') {
-      // 웹: 카카오 OAuth 페이지로 리다이렉트
-      const kakaoAppKey = process.env.EXPO_PUBLIC_KAKAO_APP_KEY ?? '';
-      const url = `${KAKAO_AUTH_URL}?client_id=${kakaoAppKey}&redirect_uri=${encodeURIComponent(WEB_REDIRECT_URI)}&response_type=code`;
+      // 웹: 카카오 OAuth 페이지로 리다이렉트 (client_id = REST API 키)
+      const restApiKey = process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY ?? '';
+      const redirectUri = `${window.location.origin}/auth/kakao/callback`;
+      const url = `${KAKAO_AUTH_URL}?client_id=${restApiKey}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
       await Linking.openURL(url);
       return;
     }
