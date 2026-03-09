@@ -1,0 +1,71 @@
+# 배포
+
+StudioGo 배포 가이드입니다.
+
+## 모노레포 구조
+
+```
+studiogo/
+├── apps/
+│   ├── mobile/      # Expo 앱 (React Native)
+│   └── api/         # Hono API (Vercel Serverless)
+├── shared/
+│   ├── domain/      # 순수 비즈니스 규칙
+│   ├── contracts/   # Zod 스키마, DTO
+│   ├── db/          # Drizzle 스키마, 마이그레이션
+│   └── constants/   # 공유 상수
+```
+
+## API 서버 배포 (Vercel Serverless)
+
+`main` 브랜치에 푸시 시 Vercel이 자동 빌드 및 배포합니다.
+
+### 환경 변수
+
+| 변수 | 설명 |
+|------|------|
+| `DATABASE_URL` | Neon PostgreSQL 연결 문자열 |
+| `KAKAO_CLIENT_ID` | 카카오 로그인 앱 키 |
+| `KAKAO_CLIENT_SECRET` | 카카오 로그인 시크릿 |
+| `CRON_SECRET` | 크론 작업 보안 키 |
+| `EXPO_PUSH_TOKEN` | Expo Push 알림 토큰 |
+
+## 모바일 앱 배포
+
+### EAS Build (Expo Application Services)
+
+```bash
+# iOS 빌드
+eas build --platform ios --profile production
+
+# Android 빌드
+eas build --platform android --profile production
+
+# 스토어 제출
+eas submit --platform ios
+eas submit --platform android
+```
+
+### OTA 업데이트
+
+네이티브 코드 변경이 없는 경우 OTA(Over The Air) 업데이트 가능:
+
+```bash
+eas update --branch production --message "업데이트 설명"
+```
+
+## 데이터베이스 마이그레이션
+
+```bash
+# Drizzle 마이그레이션 생성
+npx drizzle-kit generate
+
+# 마이그레이션 적용
+npx drizzle-kit migrate
+```
+
+## 개발 서버
+
+```bash
+npm run dev:all  # 모바일 + API 동시 실행
+```
