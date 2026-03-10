@@ -46,6 +46,9 @@ coverage/
 # Drizzle
 drizzle/meta/
 
+# Next.js
+.next/
+
 # Vercel
 .vercel/
 
@@ -53,3 +56,4 @@ drizzle/meta/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.vercel

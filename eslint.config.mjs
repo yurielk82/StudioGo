@@ -4,7 +4,7 @@ import tsparser from '@typescript-eslint/parser';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.expo/**', '**/web-build/**', '**/.vercel/**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.expo/**', '**/web-build/**', '**/.vercel/**', '**/.next/**'],
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

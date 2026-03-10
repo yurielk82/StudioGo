@@ -9,13 +9,15 @@
   "scripts": {
     "dev:mobile": "npm run dev --workspace=apps/mobile",
     "dev:api": "npm run dev --workspace=apps/api",
-    "dev:all": "concurrently \"npm run dev:mobile\" \"npm run dev:api\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:all": "concurrently \"npm run dev:mobile\" \"npm run dev:api\" \"npm run dev:web\"",
     "build:mobile": "npm run build --workspace=apps/mobile",
     "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
     "lint": "eslint . --no-warn-ignored",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit --project apps/mobile/tsconfig.json && tsc --noEmit --project apps/api/tsconfig.json",
+    "typecheck": "tsc --noEmit --project apps/mobile/tsconfig.json && tsc --noEmit --project apps/api/tsconfig.json && tsc --noEmit --project apps/web/tsconfig.json",
     "test": "vitest run",
     "prepare": "husky || true"
   },

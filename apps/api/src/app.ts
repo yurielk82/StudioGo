@@ -24,7 +24,7 @@ import { env } from './lib/env';
 
 const CORS_ORIGINS =
   env.NODE_ENV === 'production'
-    ? [env.APP_URL]
+    ? ([env.APP_URL, env.WEB_URL].filter(Boolean) as string[])
     : ['http://localhost:8081', 'http://localhost:3000'];
 
 const app = new Hono().basePath('/api');

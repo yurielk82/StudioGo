@@ -18,6 +18,7 @@ const envSchema = z.object({
   ASSET_PUBLIC_BASE_URL: z.string().optional(),
   ASSET_UPLOAD_BASE_URL: z.string().optional(),
   ALLOW_DEV_LOGIN: z.string().optional(),
+  WEB_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
