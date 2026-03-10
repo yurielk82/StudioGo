@@ -31,26 +31,46 @@ export const statsService = {
     const startDate = getPeriodStartDate(period);
     const today = new Date().toISOString().substring(0, 10);
 
-    // 회원 통계
-    const memberRows = await db
-      .select({
-        totalMembers: count(),
-        activeMembers: sql<number>`count(*) filter (where ${users.status} = 'APPROVED')`,
-      })
-      .from(users)
-      .where(eq(users.role, 'MEMBER'));
+    // 독립 쿼리 5개 병렬 실행
+    const [memberRows, reservationRows, dailyReservations, activeStudios, tierDistribution] =
+      await Promise.all([
+        db
+          .select({
+            totalMembers: count(),
+            activeMembers: sql<number>`count(*) filter (where ${users.status} = 'APPROVED')`,
+          })
+          .from(users)
+          .where(eq(users.role, 'MEMBER')),
+
+        db
+          .select({
+            totalReservations: count(),
+            monthlyReservations: sql<number>`count(*) filter (where ${reservations.date} >= ${startDate})`,
+            noShowCount: sql<number>`count(*) filter (where ${reservations.status} = 'NO_SHOW')`,
+            cancelledCount: sql<number>`count(*) filter (where ${reservations.status} = 'CANCELLED')`,
+          })
+          .from(reservations),
+
+        db
+          .select({ date: reservations.date, count: count() })
+          .from(reservations)
+          .where(and(gte(reservations.date, startDate), lte(reservations.date, today)))
+          .groupBy(reservations.date)
+          .orderBy(reservations.date),
+
+        db
+          .select({ id: studios.id, name: studios.name })
+          .from(studios)
+          .where(eq(studios.isActive, true)),
+
+        db
+          .select({ tier: users.tier, count: count() })
+          .from(users)
+          .where(and(eq(users.role, 'MEMBER'), eq(users.status, 'APPROVED')))
+          .groupBy(users.tier),
+      ]);
 
     const memberStats = memberRows[0] ?? { totalMembers: 0, activeMembers: 0 };
-
-    // 예약 통계
-    const reservationRows = await db
-      .select({
-        totalReservations: count(),
-        monthlyReservations: sql<number>`count(*) filter (where ${reservations.date} >= ${startDate})`,
-        noShowCount: sql<number>`count(*) filter (where ${reservations.status} = 'NO_SHOW')`,
-        cancelledCount: sql<number>`count(*) filter (where ${reservations.status} = 'CANCELLED')`,
-      })
-      .from(reservations);
 
     const reservationStats = reservationRows[0] ?? {
       totalReservations: 0,
@@ -64,23 +84,7 @@ export const statsService = {
     const cancellationRate =
       Math.round((Number(reservationStats.cancelledCount) / total) * 100 * 10) / 10;
 
-    // 기간 내 일별 예약 수
-    const dailyReservations = await db
-      .select({
-        date: reservations.date,
-        count: count(),
-      })
-      .from(reservations)
-      .where(and(gte(reservations.date, startDate), lte(reservations.date, today)))
-      .groupBy(reservations.date)
-      .orderBy(reservations.date);
-
     // 스튜디오별 가동률 — 기간 내 (예약 슬롯 / 전체 슬롯)
-    const activeStudios = await db
-      .select({ id: studios.id, name: studios.name })
-      .from(studios)
-      .where(eq(studios.isActive, true));
-
     const studioIds = activeStudios.map((s) => s.id);
     const studioUtilization: { studioName: string; rate: number }[] = [];
 
@@ -116,16 +120,6 @@ export const statsService = {
             studioUtilization.reduce((sum, s) => sum + s.rate, 0) / studioUtilization.length,
           )
         : 0;
-
-    // 티어별 회원 수
-    const tierDistribution = await db
-      .select({
-        tier: users.tier,
-        count: count(),
-      })
-      .from(users)
-      .where(and(eq(users.role, 'MEMBER'), eq(users.status, 'APPROVED')))
-      .groupBy(users.tier);
 
     return {
       totalMembers: Number(memberStats.totalMembers),

@@ -25,8 +25,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const CHART_COLOR_AREA = '#6C5CE7';
-const CHART_COLOR_BAR = '#00D2D3';
+const CHART_COLOR_AREA = 'var(--chart-1)';
+const CHART_COLOR_BAR = 'var(--chart-2)';
 
 function StatCardSkeleton() {
   return (

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useReservationWizardStore } from '@/stores/reservation-wizard-store';
+import { useCancelHold } from '@/hooks/useReservation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +27,8 @@ function formatDate(year: number, month: number, day: number): string {
 }
 
 export function DateStep() {
-  const { date, setDate, nextStep, prevStep } = useReservationWizardStore();
+  const { date, holdToken, setDate, nextStep, prevStep } = useReservationWizardStore();
+  const cancelHold = useCancelHold();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -107,7 +109,10 @@ export function DateStep() {
             <button
               key={dateStr}
               disabled={past}
-              onClick={() => setDate(dateStr)}
+              onClick={() => {
+                if (holdToken) cancelHold.mutate(holdToken);
+                setDate(dateStr);
+              }}
               className={cn(
                 'flex h-10 items-center justify-center rounded-lg text-sm transition-colors',
                 past && 'text-muted-foreground/40 cursor-not-allowed',

@@ -1,5 +1,5 @@
 import { View, Pressable } from 'react-native';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { QrCode, Hash, Hand } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Button, Input, COLORS } from '@/design-system';
@@ -19,6 +19,10 @@ export default function CheckinScreen() {
   const lastScanRef = useRef(0);
   const checkin = useCheckin();
   const checkout = useCheckout();
+  const checkinRef = useRef(checkin);
+  useEffect(() => {
+    checkinRef.current = checkin;
+  });
 
   function handleCheckin() {
     if (!reservationId.trim()) return;
@@ -32,21 +36,19 @@ export default function CheckinScreen() {
     });
   }
 
-  const handleBarcodeScanned = useCallback(
-    ({ data }: { data: string }) => {
-      const now = Date.now();
-      if (now - lastScanRef.current < SCAN_COOLDOWN_MS) return;
-      lastScanRef.current = now;
+  const handleBarcodeScanned = useCallback(({ data }: { data: string }) => {
+    const now = Date.now();
+    if (now - lastScanRef.current < SCAN_COOLDOWN_MS) return;
+    lastScanRef.current = now;
 
-      if (!data.trim()) return;
+    const trimmed = data.trim();
+    if (!trimmed || trimmed.length > 200) return;
 
-      checkin.mutate(
-        { reservationId: data.trim(), method: 'QR' },
-        { onSuccess: () => setReservationId('') },
-      );
-    },
-    [checkin],
-  );
+    checkinRef.current.mutate(
+      { reservationId: trimmed, method: 'QR' },
+      { onSuccess: () => setReservationId('') },
+    );
+  }, []);
 
   const renderQRSection = () => {
     if (!permission) {
