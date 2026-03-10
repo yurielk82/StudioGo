@@ -36,11 +36,8 @@ export function TimeStep() {
     }
 
     function tick() {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- holdExpiresAt는 위 guard에서 체크
-      const diff = Math.max(
-        0,
-        Math.floor((new Date(holdExpiresAt!).getTime() - Date.now()) / 1000),
-      );
+      if (!holdExpiresAt) return;
+      const diff = Math.max(0, Math.floor((new Date(holdExpiresAt).getTime() - Date.now()) / 1000));
       setRemaining(diff);
       if (diff <= 0) {
         clearHold();
