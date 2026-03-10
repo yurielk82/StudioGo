@@ -19,6 +19,14 @@ const envSchema = z.object({
   ASSET_UPLOAD_BASE_URL: z.string().optional(),
   ALLOW_DEV_LOGIN: z.string().optional(),
   WEB_URL: z.string().url().optional(),
+  // S3/R2 설정
+  S3_BUCKET_NAME: z.string().optional(),
+  S3_REGION: z.string().default('auto'),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_ENDPOINT: z.string().url().optional(),
+  // Sentry
+  SENTRY_DSN: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

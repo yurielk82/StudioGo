@@ -1,10 +1,13 @@
 import { View, Pressable } from 'react-native';
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { QrCode, Hash, Hand } from 'lucide-react-native';
 import { Screen, StyledText, GlassCard, Button, Input, COLORS } from '@/design-system';
 import { useCheckin, useCheckout } from '@/hooks/useOperator';
 
 type CheckinMethod = 'QR' | 'PIN' | 'MANUAL';
+
+const SCAN_COOLDOWN_MS = 3000;
 
 /**
  * 체크인/체크아웃 화면 — QR/PIN/수동 3종
@@ -12,6 +15,8 @@ type CheckinMethod = 'QR' | 'PIN' | 'MANUAL';
 export default function CheckinScreen() {
   const [method, setMethod] = useState<CheckinMethod>('MANUAL');
   const [reservationId, setReservationId] = useState('');
+  const [permission, requestPermission] = useCameraPermissions();
+  const lastScanRef = useRef(0);
   const checkin = useCheckin();
   const checkout = useCheckout();
 
@@ -26,6 +31,66 @@ export default function CheckinScreen() {
       onSuccess: () => setReservationId(''),
     });
   }
+
+  const handleBarcodeScanned = useCallback(
+    ({ data }: { data: string }) => {
+      const now = Date.now();
+      if (now - lastScanRef.current < SCAN_COOLDOWN_MS) return;
+      lastScanRef.current = now;
+
+      if (!data.trim()) return;
+
+      checkin.mutate(
+        { reservationId: data.trim(), method: 'QR' },
+        { onSuccess: () => setReservationId('') },
+      );
+    },
+    [checkin],
+  );
+
+  const renderQRSection = () => {
+    if (!permission) {
+      return (
+        <View className="items-center py-12">
+          <QrCode size={64} color={COLORS.neutral[300]} />
+          <StyledText variant="body-md" className="mt-4 text-neutral-500">
+            카메라 권한을 확인 중입니다...
+          </StyledText>
+        </View>
+      );
+    }
+
+    if (!permission.granted) {
+      return (
+        <View className="items-center py-12">
+          <QrCode size={64} color={COLORS.neutral[300]} />
+          <StyledText variant="body-md" className="mt-4 text-center text-neutral-500">
+            QR 스캔을 위해 카메라 권한이 필요합니다.
+          </StyledText>
+          <Button onPress={requestPermission} className="mt-4" size="md">
+            카메라 권한 허용
+          </Button>
+        </View>
+      );
+    }
+
+    return (
+      <View className="overflow-hidden rounded-xl" style={{ height: 280 }}>
+        <CameraView
+          style={{ flex: 1 }}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          onBarcodeScanned={handleBarcodeScanned}
+        />
+        <View className="absolute bottom-3 left-0 right-0 items-center">
+          <View className="rounded-full bg-black/60 px-4 py-1.5">
+            <StyledText variant="label-md" className="text-white">
+              QR 코드를 카메라에 비추세요
+            </StyledText>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <Screen centered>
@@ -62,12 +127,7 @@ export default function CheckinScreen() {
       {/* 입력 */}
       <GlassCard className="mb-6 p-5">
         {method === 'QR' ? (
-          <View className="items-center py-12">
-            <QrCode size={64} color={COLORS.neutral[300]} />
-            <StyledText variant="body-md" className="mt-4 text-neutral-500">
-              QR 코드 스캐너는 카메라 권한이 필요합니다.
-            </StyledText>
-          </View>
+          renderQRSection()
         ) : (
           <Input
             label={method === 'PIN' ? 'PIN 번호' : '예약번호 / 예약 ID'}
@@ -96,27 +156,29 @@ export default function CheckinScreen() {
         </StyledText>
       )}
 
-      <View className="flex-row gap-3">
-        <Button
-          onPress={handleCheckin}
-          loading={checkin.isPending}
-          disabled={!reservationId.trim()}
-          className="flex-1"
-          size="lg"
-        >
-          체크인
-        </Button>
-        <Button
-          onPress={handleCheckout}
-          loading={checkout.isPending}
-          disabled={!reservationId.trim()}
-          variant="secondary"
-          className="flex-1"
-          size="lg"
-        >
-          체크아웃
-        </Button>
-      </View>
+      {method !== 'QR' && (
+        <View className="flex-row gap-3">
+          <Button
+            onPress={handleCheckin}
+            loading={checkin.isPending}
+            disabled={!reservationId.trim()}
+            className="flex-1"
+            size="lg"
+          >
+            체크인
+          </Button>
+          <Button
+            onPress={handleCheckout}
+            loading={checkout.isPending}
+            disabled={!reservationId.trim()}
+            variant="secondary"
+            className="flex-1"
+            size="lg"
+          >
+            체크아웃
+          </Button>
+        </View>
+      )}
     </Screen>
   );
 }

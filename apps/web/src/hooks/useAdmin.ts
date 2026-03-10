@@ -83,6 +83,27 @@ interface MemberItem {
   status: string;
 }
 
+// 관리자 통계
+interface AdminStats {
+  totalMembers: number;
+  activeMembers: number;
+  totalReservations: number;
+  monthlyReservations: number;
+  averageOccupancyRate: number;
+  noShowRate: number;
+  cancellationRate: number;
+  dailyReservations: { date: string; count: number }[];
+  studioUtilization: { studioName: string; rate: number }[];
+  tierDistribution: { tier: string; count: number }[];
+}
+
+export function useAdminStats(period: 'week' | 'month' | 'quarter' = 'month') {
+  return useQuery({
+    queryKey: QUERY_KEYS.admin.stats(period),
+    queryFn: () => apiClient<AdminStats>(`${API_ROUTES.ADMIN.STATS}?period=${period}`),
+  });
+}
+
 // 운영 설정
 export function useOperationSettings() {
   return useQuery({

@@ -54,6 +54,7 @@ export function createApiRoutes(baseUrl: string) {
       ANNOUNCEMENTS: `${baseUrl}/admin/announcements`,
       announcementById: (id: string) => `${baseUrl}/admin/announcements/${id}`,
       permissions: (operatorId: string) => `${baseUrl}/admin/permissions/${operatorId}`,
+      STATS: `${baseUrl}/admin/stats`,
     },
 
     CALENDAR: {
@@ -128,6 +129,7 @@ export const QUERY_KEYS = {
     announcements: ['admin', 'announcements'] as const,
     logs: (params?: Record<string, unknown>) => ['admin', 'logs', params] as const,
     permissions: (operatorId: string) => ['admin', 'permissions', operatorId] as const,
+    stats: (period?: string) => ['admin', 'stats', period] as const,
   },
   operator: {
     dashboard: ['operator', 'dashboard'] as const,

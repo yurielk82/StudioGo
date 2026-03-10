@@ -29,7 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './assets/favicon.png',
     bundler: 'metro',
   },
-  plugins: ['expo-router', 'expo-secure-store'],
+  plugins: ['expo-router', 'expo-secure-store', '@sentry/react-native/expo'],
   experiments: {
     typedRoutes: true,
   },
@@ -37,5 +37,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001',
     kakaoAppKey: process.env.EXPO_PUBLIC_KAKAO_APP_KEY ?? '',
+    sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? '',
   },
 });

@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { adminService } from '../services/admin-service';
+import { statsService } from '../services/stats-service';
 import { requireAuth, requireAdmin, getAuthUser } from '../middleware/auth';
 import { success, created, noContent, paginated } from '../lib/response';
 import {
@@ -176,6 +177,18 @@ adminRoute.delete('/announcements/:id', async (c) => {
   const user = getAuthUser(c);
   await adminService.deleteAnnouncement(id, user.userId);
   return noContent(c);
+});
+
+// ── 통계 ──────────────────────────────────────
+
+// GET /admin/stats — 관리자 통계
+adminRoute.get('/stats', async (c) => {
+  const period = z
+    .enum(['week', 'month', 'quarter'])
+    .default('month')
+    .parse(c.req.query('period') ?? undefined);
+  const stats = await statsService.getAdminStats(period);
+  return success(c, stats);
 });
 
 // ── 운영자 권한 ──────────────────────────────────

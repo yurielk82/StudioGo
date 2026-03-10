@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import * as Sentry from '@sentry/node';
 import { errorHandler } from './middleware/error-handler';
 import { requestLogger } from './middleware/request-logger';
 import { rateLimiter, authRateLimiter } from './middleware/rate-limiter';
@@ -22,6 +23,16 @@ import { APP_NAME, API_VERSION } from '../../../shared/constants';
 import { db } from '../../../shared/db/index';
 import { env } from './lib/env';
 
+// Sentry 초기화
+if (env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    environment: env.NODE_ENV,
+    tracesSampleRate: env.NODE_ENV === 'production' ? 0.2 : 1.0,
+    enabled: env.NODE_ENV !== 'test',
+  });
+}
+
 const CORS_ORIGINS =
   env.NODE_ENV === 'production'
     ? ([env.APP_URL, env.WEB_URL].filter(Boolean) as string[])
@@ -30,7 +41,13 @@ const CORS_ORIGINS =
 const app = new Hono().basePath('/api');
 
 // 글로벌 에러 핸들러 + 미들웨어
-app.onError(errorHandler);
+app.onError((err, c) => {
+  // Sentry에 에러 전송
+  if (env.SENTRY_DSN) {
+    Sentry.captureException(err);
+  }
+  return errorHandler(err, c);
+});
 app.use('*', requestLogger);
 app.use(
   '*',
