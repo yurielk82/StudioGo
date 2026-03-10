@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/error-handler';
 import { requestLogger } from './middleware/request-logger';
 import { rateLimiter, authRateLimiter } from './middleware/rate-limiter';
 import { securityHeaders } from './middleware/security-headers';
+import { cacheControl } from './middleware/cache-control';
 import authRoutes from './routes/auth';
 import reservationsRoutes from './routes/reservations';
 import slotsRoutes from './routes/slots';
@@ -57,6 +58,7 @@ app.use(
   }),
 );
 app.use('*', securityHeaders);
+app.use('*', cacheControl());
 app.use('*', rateLimiter());
 app.use('/auth/*', authRateLimiter);
 

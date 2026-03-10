@@ -138,7 +138,7 @@ export type Announcement = z.infer<typeof AnnouncementSchema>;
 export const UpdateFeatureFlagRequestSchema = z.object({
   enabled: z.boolean(),
   description: z.string().max(200).optional(),
-  scope: z.record(z.unknown()).nullable().optional(),
+  scope: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 export type UpdateFeatureFlagRequest = z.infer<typeof UpdateFeatureFlagRequestSchema>;
 
@@ -147,7 +147,7 @@ export const FeatureFlagSchema = z.object({
   key: z.string(),
   enabled: z.boolean(),
   description: z.string().nullable(),
-  scope: z.record(z.unknown()).nullable(),
+  scope: z.record(z.string(), z.unknown()).nullable(),
 });
 export type FeatureFlag = z.infer<typeof FeatureFlagSchema>;
 
@@ -170,7 +170,7 @@ export const SystemLogSchema = z.object({
   action: z.string(),
   target: z.string(),
   targetId: z.string().nullable(),
-  details: z.record(z.unknown()).nullable(),
+  details: z.record(z.string(), z.unknown()).nullable(),
   ipAddress: z.string().nullable(),
   createdAt: z.string().datetime(),
 });

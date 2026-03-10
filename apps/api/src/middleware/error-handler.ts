@@ -55,7 +55,7 @@ export const errorHandler: ErrorHandler = (error: Error, c: Context) => {
 
   // Zod 검증 에러
   if (error instanceof ZodError) {
-    const issues = error.errors.map((e) => ({
+    const issues = error.issues.map((e) => ({
       path: e.path.join('.'),
       message: e.message,
     }));

@@ -64,7 +64,7 @@ export const AppNotificationSchema = z.object({
   title: z.string(),
   body: z.string(),
   type: z.string(),
-  data: z.record(z.unknown()).nullable(),
+  data: z.record(z.string(), z.unknown()).nullable(),
   isRead: z.boolean(),
   readAt: z.string().datetime().nullable(),
   createdAt: z.string().datetime(),
