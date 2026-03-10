@@ -79,11 +79,11 @@
 
 ## 미처리 사항
 
-| 항목                                     | 사유                        |
-| ---------------------------------------- | --------------------------- |
-| 예약 위자드 (5단계)                      | 복잡도 높음, 별도 세션 권장 |
-| localStorage XSS → HttpOnly 쿠키         | API 변경 필요, 장기 과제    |
-| ESLint Next.js 플러그인                  | 새 의존성 필요              |
-| Vercel studiogo-web 프로젝트 생성 + 배포 | 인프라 작업, 수동 필요      |
-| 차트 실데이터 연동                       | stats API 확장 필요         |
-| next.config.ts outputFileTracingRoot     | 모노레포 트레이싱 최적화    |
+| 항목                                    | 사유                        |
+| --------------------------------------- | --------------------------- |
+| 예약 위자드 (5단계)                     | 복잡도 높음, 별도 세션 권장 |
+| localStorage XSS → HttpOnly 쿠키        | API 변경 필요, 장기 과제    |
+| ESLint Next.js 플러그인                 | 새 의존성 필요              |
+| Vercel studiogo 프로젝트로 웹 배포 통합 | 완료                        |
+| 차트 실데이터 연동                      | stats API 확장 필요         |
+| next.config.ts outputFileTracingRoot    | 모노레포 트레이싱 최적화    |
