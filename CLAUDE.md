@@ -3,6 +3,12 @@
 의류 창고 기반 라이브커머스 스튜디오 예약 플랫폼.
 단일 리포: Expo 앱(모바일/웹) + Hono API 서버(Vercel Serverless).
 
+| 항목     | 값                                |
+| -------- | --------------------------------- |
+| **유형** | 풀스택                            |
+| **역할** | 라이브커머스 스튜디오 예약 플랫폼 |
+| **MCP**  | Vercel                            |
+
 ## 기술 스택
 
 - **Frontend**: Expo SDK 52+, React Native, TypeScript strict, NativeWind v5, NativeWindUI
@@ -64,7 +70,4 @@ npm run dev:all  # 모바일 + API 동시 실행
 
 ## 문서 반영
 
-- 사용자향 기능 추가/변경 시 `docs/manual/` 문서 동시 업데이트 (같은 리포 내)
-- UI 변경 → `user-guide/`, 배포/설정 변경 → `admin-guide/`
-- codegear-dev-portal CLAUDE.md 컨벤션 준수
-- 포털 반영: 포털 리포에서 `git submodule update --remote repos/studiogo`
+codegear-dev-portal 대상. 기능 추가/변경 시 `docs/manual/` 동시 업데이트. 포털 반영: `git submodule update --remote repos/studiogo`
