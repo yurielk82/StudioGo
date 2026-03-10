@@ -2,6 +2,7 @@
 
 import { CalendarCheck, TrendingUp, Star } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
+import { StatCard } from '@/components/dashboard/StatCard';
 
 export default function MemberHomePage() {
   const user = useAuthStore((s) => s.user);
@@ -30,33 +31,6 @@ export default function MemberHomePage() {
           예약된 일정이 없습니다. 새 예약을 만들어 보세요.
         </p>
       </div>
-    </div>
-  );
-}
-
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  description,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  description: string;
-}) {
-  return (
-    <div className="glass-card p-5">
-      <div className="flex items-center gap-3">
-        <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="text-muted-foreground text-xs">{label}</p>
-          <p className="text-xl font-bold">{value}</p>
-        </div>
-      </div>
-      <p className="text-muted-foreground mt-2 text-xs">{description}</p>
     </div>
   );
 }

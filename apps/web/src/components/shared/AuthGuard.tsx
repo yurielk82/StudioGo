@@ -12,7 +12,7 @@ import { Loader2 } from 'lucide-react';
  * - 비로그인 → /login
  * - 로그인 + PENDING + 추가정보 미입력 → /signup
  * - 로그인 + PENDING + 추가정보 입력 완료 → /pending
- * - 로그인 + SUSPENDED → /suspended (TODO)
+ * - 로그인 + SUSPENDED → /suspended
  * - 로그인 + APPROVED + MEMBER → /member
  * - 로그인 + APPROVED + OPERATOR → /operator
  * - 로그인 + APPROVED + ADMIN → /admin
@@ -32,7 +32,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       pathname.startsWith('/login') ||
       pathname.startsWith('/callback') ||
       pathname.startsWith('/signup') ||
-      pathname.startsWith('/pending');
+      pathname.startsWith('/pending') ||
+      pathname.startsWith('/suspended');
 
     if (!isLoggedIn) {
       if (!isAuthPage) {
@@ -54,7 +55,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     // SUSPENDED 사용자
     if (user?.status === 'SUSPENDED') {
       if (pathname !== '/suspended') {
-        router.replace('/login');
+        router.replace('/suspended');
       }
       return;
     }

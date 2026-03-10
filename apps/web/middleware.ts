@@ -1,24 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 /**
- * Next.js 미들웨어 — 보호 라우트 1차 방어선
- * 실제 인증 검증은 AuthGuard 클라이언트에서 수행
+ * Next.js 미들웨어 — 보호 라우트 1차 방어선 (빠른 리다이렉트)
+ *
+ * 토큰은 localStorage에 저장되어 SSR에서 접근 불가.
+ * 실제 인증 검증은 클라이언트 AuthGuard에서 수행.
+ * 이 미들웨어는 SSR 단계에서 정적 페이지를 통과시키는 역할만 담당.
  */
-export function middleware(request: NextRequest) {
-  const token =
-    request.cookies.get('studiogo_access_token')?.value ??
-    request.headers.get('authorization')?.split(' ')[1];
-
-  const { pathname } = request.nextUrl;
-  const isProtectedRoute =
-    pathname.startsWith('/member') ||
-    pathname.startsWith('/operator') ||
-    pathname.startsWith('/admin');
-
-  if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
+export function middleware(_request: NextRequest) {
   return NextResponse.next();
 }
 

@@ -5,3 +5,6 @@ export const APP_NAME = 'StudioGo';
 export const APP_NAME_KR = '스튜디오고';
 export const TIMEZONE = 'Asia/Seoul';
 export const API_VERSION = '0.2.0';
+
+export { createApiRoutes, QUERY_KEYS } from './api';
+export type { ApiRoutes } from './api';

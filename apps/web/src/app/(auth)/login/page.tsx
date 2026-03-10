@@ -70,7 +70,7 @@ export default function LoginPage() {
           onClick={handleKakaoLogin}
           className="bg-kakao text-kakao-text hover:bg-kakao-active flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-semibold transition-colors"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.758 5.108 4.415 6.484-.194.727-.703 2.636-.806 3.044-.128.507.186.5.39.364.161-.107 2.563-1.742 3.606-2.45.77.11 1.568.168 2.395.168 5.523 0 10-3.463 10-7.691C22 6.463 17.523 3 12 3" />
           </svg>
           카카오로 시작하기

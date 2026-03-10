@@ -54,7 +54,8 @@ async function refreshTokens(): Promise<boolean> {
       tokenStorage.setAccessToken(data.data.accessToken);
       tokenStorage.setRefreshToken(data.data.refreshToken);
       return true;
-    } catch {
+    } catch (err) {
+      console.error('[토큰 갱신 실패]', err);
       return false;
     } finally {
       isRefreshing = false;

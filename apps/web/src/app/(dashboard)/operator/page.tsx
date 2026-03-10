@@ -1,6 +1,7 @@
 'use client';
 
 import { ClipboardList, Users, ScanLine, PackageCheck } from 'lucide-react';
+import { StatCard } from '@/components/dashboard/StatCard';
 
 export default function OperatorDashboardPage() {
   return (
@@ -13,10 +14,10 @@ export default function OperatorDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard icon={ClipboardList} label="오늘 예약" value="—" />
-        <DashboardCard icon={ScanLine} label="체크인 대기" value="—" />
-        <DashboardCard icon={Users} label="활성 회원" value="—" />
-        <DashboardCard icon={PackageCheck} label="출고 대기" value="—" />
+        <StatCard icon={ClipboardList} label="오늘 예약" value="—" />
+        <StatCard icon={ScanLine} label="체크인 대기" value="—" />
+        <StatCard icon={Users} label="활성 회원" value="—" />
+        <StatCard icon={PackageCheck} label="출고 대기" value="—" />
       </div>
 
       <div className="glass-card p-6">
@@ -24,30 +25,6 @@ export default function OperatorDashboardPage() {
         <p className="text-muted-foreground mt-2 text-sm">
           Phase 2에서 DataTable과 함께 구현됩니다.
         </p>
-      </div>
-    </div>
-  );
-}
-
-function DashboardCard({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="glass-card p-5">
-      <div className="flex items-center gap-3">
-        <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="text-muted-foreground text-xs">{label}</p>
-          <p className="text-2xl font-bold">{value}</p>
-        </div>
       </div>
     </div>
   );
