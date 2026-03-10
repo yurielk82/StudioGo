@@ -17,12 +17,12 @@ export function Footer() {
 
           {/* 링크 */}
           <div className="text-muted-foreground flex gap-6 text-sm">
-            <a href="#" className="hover:text-foreground transition-colors">
+            <Link href="/terms" className="hover:text-foreground transition-colors">
               이용약관
-            </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
               개인정보처리방침
-            </a>
+            </Link>
             <a
               href="mailto:support@studiogo.kr"
               className="hover:text-foreground transition-colors"
