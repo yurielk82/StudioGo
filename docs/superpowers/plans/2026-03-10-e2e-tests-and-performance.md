@@ -24,7 +24,7 @@
 - [ ] **Step 1: Playwright 의존성 설치**
 
 ```bash
-cd /home/yurie/GitHub/StudioGo && npm install -D @playwright/test --workspace=apps/web
+cd /home/ubuntu/GitHub/StudioGo && npm install -D @playwright/test --workspace=apps/web
 ```
 
 - [ ] **Step 2: Playwright 브라우저 설치**
